@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "525960322699",
+    "project_id": "rankit-78bb2",
+    "storage_bucket": "rankit-78bb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525960322699:android:b4dfbabedf71a7ffd3be8e",
+        "android_client_info": {
+          "package_name": "com.example.rankit_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNkBSFyKNCD5_UxqqflW77DST_UAQaqV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,12 +11,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Box<ListData> listBox;
+
   String filter = '';
 
   @override
   void initState() {
     super.initState();
     listBox = Hive.box<ListData>('lists');
+
+    try {
+      var data = listBox.get('key');
+
+      print(data);
+      // Process data...
+    } catch (e) {
+      print('Failed to read data: $e');
+      // Handle error...
+    }
   }
 
   @override
@@ -36,12 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
         valueListenable: listBox.listenable(),
         builder: (context, Box<ListData> box, _) {
           var lists =
-              box.values.where((list) => list.title.contains(filter)).toList();
+              box.values.where((list) => list.listName.contains(filter)).toList();
           return ListView.builder(
             itemCount: lists.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(lists[index].title),
+                title: Text(lists[index].listName),
               );
             },
           );

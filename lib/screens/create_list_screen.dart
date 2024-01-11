@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateListScreen extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class CreateListScreen extends StatefulWidget {
 class _CreateListScreenState extends State<CreateListScreen> {
   late Box<ListData> listBox;
   final _formKey = GlobalKey<FormState>();
-  final _controller = TextEditingController();
+  final _listNameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _itemsController = TextEditingController();
 
@@ -29,7 +30,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
       var newListData = ListData(
         listId: uuid.v1(),
         listName: _listNameController.text,
-        description: _descriptionController.text,
+        listDescription: _descriptionController.text,
         items: _itemsController.text
             .split(',')
             .map((item) => Item(name: item))
@@ -37,7 +38,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
         // Set other fields...
       );
 
-      await box.add(listData);
+      await box.add(newListData);
       Navigator.pop(context);
     }
   }
@@ -53,7 +54,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
         child: Column(
           children: <Widget>[
             TextFormField(
-              controller: _controller,
+              controller: _listNameController,
               decoration: InputDecoration(hintText: 'List title'),
               validator: (value) {
                 if (value == null || value.isEmpty) {

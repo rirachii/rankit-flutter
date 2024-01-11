@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
 
-part 'list_data.g.dart';
+// part 'ListData.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 0, adapterName: "MyItemAdapter")
 class Item extends HiveObject {
   @HiveField(0)
   String? itemId;
@@ -16,12 +16,6 @@ class Item extends HiveObject {
   @HiveField(3)
   String? description;
 
-  // Item({
-  //   required this.itemId,
-  //   required this.name,
-  //   required this.img,
-  //   required this.description,
-  // });
   Item({
     this.itemId,
     this.name,
@@ -30,7 +24,7 @@ class Item extends HiveObject {
   });
 }
 
-class ItemAdapter extends TypeAdapter<Item> {
+class MyItemAdapter extends TypeAdapter<Item> {
   @override
   final typeId = 0;
 
@@ -53,7 +47,7 @@ class ItemAdapter extends TypeAdapter<Item> {
   }
 }
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 1, adapterName: "MyListDataAdapter")
 class ListData extends HiveObject {
   @HiveField(0)
   String listId;
@@ -65,61 +59,61 @@ class ListData extends HiveObject {
   String listDescription;
 
   @HiveField(3)
-  String listImg;
+  String? listImg;
 
   @HiveField(4)
   List<Item> items;
 
   @HiveField(5)
-  String visibility;
+  String? visibility;
 
   @HiveField(6)
-  String dateCreated;
+  String? dateCreated;
 
   @HiveField(7)
-  String lastUpdated;
+  String? lastUpdated;
 
   @HiveField(8)
-  String updateNote;
+  String? updateNote;
 
   @HiveField(9)
-  int likes;
+  int? likes;
 
   @HiveField(10)
-  int completed;
+  int? completed;
 
   @HiveField(11)
-  String creatorId;
+  String? creatorId;
 
   @HiveField(12)
-  String creatorName;
+  String? creatorName;
 
   @HiveField(13)
-  String creatorPfp;
+  String? creatorPfp;
 
   @HiveField(14)
-  List<String> tags;
+  List<String>? tags;
 
   ListData({
     required this.listId,
     required this.listName,
     required this.listDescription,
-    required this.listImg,
     required this.items,
-    required this.visibility,
-    required this.dateCreated,
-    required this.lastUpdated,
-    required this.updateNote,
-    required this.likes,
-    required this.completed,
-    required this.creatorId,
-    required this.creatorName,
-    required this.creatorPfp,
-    required this.tags,
+    this.listImg,
+    this.visibility,
+    this.dateCreated,
+    this.lastUpdated,
+    this.updateNote,
+    this.likes,
+    this.completed,
+    this.creatorId,
+    this.creatorName,
+    this.creatorPfp,
+    this.tags,
   });
 }
 
-class ListDataAdapter extends TypeAdapter<ListData> {
+class MyListDataAdapter extends TypeAdapter<ListData> {
   @override
   final typeId = 1;
 

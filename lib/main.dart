@@ -6,7 +6,7 @@ import './screens/create_list_screen.dart';
 import './screens/list_screen.dart';
 import './screens/profile_screen.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase/supabase.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,13 +14,16 @@ import 'ListData.dart';
 
 void main() async {
   await Hive.initFlutter();
-  Hive.registerAdapter(ListDataAdapter());
-  Hive.registerAdapter(ItemAdapter());
   await Hive.openBox<ListData>('lists');
+  
+  // Hive.registerAdapter(MyListDataAdapter());
+  // Hive.registerAdapter(MyItemAdapter());
 
-  await dotenv.load();
-  var apiUrl = dotenv.env['SUPA_URL'];
-  var apiKey = dotenv.env['API_KEY'];
+  await dotenv.load(fileName: ".env");
+  var apiUrl = dotenv.get('SUPA_URL');
+  var apiKey = dotenv.get('API_KEY');
+
+  print(apiUrl);
   final client = SupabaseClient(apiUrl, apiKey);
   runApp(MyApp(client: client));
 }
@@ -37,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: 'home',
+      initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(client: client),
         '/home': (context) => HomeScreen(),

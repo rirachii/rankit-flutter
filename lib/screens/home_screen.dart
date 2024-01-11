@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 // import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -36,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ValueListenableBuilder(
         valueListenable: listBox.listenable(),
         builder: (context, Box<ListData> box, _) {
-          var lists = box.values.where((list) => list.title.contains(filter)).toList();
+          var lists =
+              box.values.where((list) => list.title.contains(filter)).toList();
           return ListView.builder(
             itemCount: lists.length,
             itemBuilder: (context, index) {

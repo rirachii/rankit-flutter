@@ -6,17 +6,22 @@ import './screens/create_list_screen.dart';
 import './screens/list_screen.dart';
 import './screens/profile_screen.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:supabase/supabase.dart';
-// import 'package:hive/hive.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'ListData.dart';
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ListDataAdapter());
+  Hive.registerAdapter(ItemAdapter());
   await Hive.openBox<ListData>('lists');
-  final client = SupabaseClient('https://cnntfqeyntlfqzxjmiof.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNubnRmcWV5bnRsZnF6eGptaW9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ1MzY1NjQsImV4cCI6MjAyMDExMjU2NH0.W4-73L6OFku-z8r51hWv0e59SItC2U_4ZD4k-qpnx4w');
+
+  await dotenv.load();
+  var apiUrl = dotenv.env['SUPA_URL'];
+  var apiKey = dotenv.env['API_KEY'];
+  final client = SupabaseClient(apiUrl, apiKey);
   runApp(MyApp(client: client));
 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:hive/hive.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
 import 'create_list_screen.dart';
@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     listBox = Hive.box<ListData>('lists');
+    // listBox.deleteFromDisk();
 
     try {
       var data = listBox.get('key');
@@ -53,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(lists[index].listName),
+                subtitle: Text(lists[index].listDescription),
               );
             },
           );

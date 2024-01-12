@@ -11,19 +11,24 @@ import 'package:supabase/supabase.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'ListData.dart';
+// import 'ListBox.dart';
+// import 'todo_data.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox<ListData>('lists');
-  
-  // Hive.registerAdapter(MyListDataAdapter());
-  // Hive.registerAdapter(MyItemAdapter());
 
+  Hive.registerAdapter<ListData>(ListDataAdapter());
+  // Hive.registerAdapter(TodoAdapter());
+  print("starting");
   await dotenv.load(fileName: ".env");
-  var apiUrl = dotenv.get('SUPA_URL');
-  var apiKey = dotenv.get('API_KEY');
+  var apiUrl = dotenv.get("SUPA_URL");
+  var apiKey = dotenv.get("API_KEY");
 
   print(apiUrl);
+  // if (!Hive.isBoxOpen('lists')) {
+  await Hive.openBox<ListData>('lists');
+  // }
   final client = SupabaseClient(apiUrl, apiKey);
   runApp(MyApp(client: client));
 }
@@ -40,7 +45,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: '/home',
       routes: {
         '/': (context) => LoginScreen(client: client),
         '/home': (context) => HomeScreen(),

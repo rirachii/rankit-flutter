@@ -11,15 +11,15 @@ import 'package:supabase/supabase.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'ListData.dart';
-import 'box.dart' as box;
+import 'box.dart' as globalBox;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
-  await Hive.openBox<ListData>('lists');
-  box.listBox = await Hive.openBox('lists');
+  globalBox.listBox = await Hive.openBox<ListData>('lists');
+  // globalBox.listBox = await Hive.box('lists');
 
   print("starting");
   await dotenv.load(fileName: ".env");

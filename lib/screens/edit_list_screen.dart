@@ -26,7 +26,8 @@ class _EditListScreenState extends State<EditListScreen> {
     // Get the Hive box object
 
     // Get the list object from the box using widget.listId
-    final listObject = globalBox.listsBox.get(widget.listId);
+    print(widget.listId);
+    final listObject = globalBox.listBox.get(widget.listId);
 
     // Update the listName and listDescription with the values from the list object
     listName = listObject['name'];

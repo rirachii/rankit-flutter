@@ -23,15 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // listBox = Hive.box<ListData>('lists');
     // listBox.deleteFromDisk();
 
-    try {
-      var data = globalBox.listBox.get('key');
+    // try {
+    //   var data = globalBox.listBox.get('key');
 
-      print(data);
-      // Process data...
-    } catch (e) {
-      print('Failed to read data: $e');
-      // Handle error...
-    }
+    //   print(data);
+    //   // Process data...
+    // } catch (e) {
+    //   print('Failed to read data: $e');
+    //   // Handle error...
+    // }
   }
 
   @override
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       
       body: ValueListenableBuilder(
         valueListenable: globalBox.listBox.listenable(),
-        builder: git(context, Box<ListData> box, _) {
+        builder: (context, Box<dynamic> box, _) {
           var lists = box.values
               .where((list) => list.listName.contains(filter))
               .toList();
@@ -72,10 +72,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(lists[index].listName),
                   subtitle: Text(lists[index].listDescription),
                 ),
+                
               );
             },
           );
         },
       ),
-    );}
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateListScreen()),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+    }
 }

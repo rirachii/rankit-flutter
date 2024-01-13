@@ -20,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    globalBox.listBox.clear();
+    // globalBox.listBox.clear();
+    print('started');
   }
 
   @override

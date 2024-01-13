@@ -65,11 +65,6 @@ class _EditListScreenState extends State<EditListScreen> {
               },
             ),
             SizedBox(height: 16.0),
-            // Map<String, Map<String, String>> listItems = {
-            //       'item1': {'description': 'description1'},
-            //       'item2': {'description': 'description2'},
-            //       'item3': {'description': 'description3'},
-            //     };
             ListView.builder(
               shrinkWrap: true,
               itemCount: listItems.length,

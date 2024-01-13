@@ -16,22 +16,16 @@ class EditListScreen extends StatefulWidget {
 class _EditListScreenState extends State<EditListScreen> {
   late String listName;
   late String listDescription;
+  late Map<String, Map<String, String>> listItems;
 
   @override
   void initState() {
     super.initState();
-    // Fetch list data using widget.listId and update listName and listDescription
-    // You can use a state management solution like Provider or Riverpod to handle data fetching and state updates
 
-    // Get the Hive box object
-
-    // Get the list object from the box using widget.listId
-    print(widget.listId);
     final listObject = globalBox.listBox.get(widget.listId);
-
-    // Update the listName and listDescription with the values from the list object
-    listName = listObject['name'];
-    listDescription = listObject['description'];
+    listName = listObject.listName;
+    listDescription = listObject.listDescription;
+    listItems = listObject.items;
   }
 
   @override
@@ -71,9 +65,69 @@ class _EditListScreenState extends State<EditListScreen> {
               },
             ),
             SizedBox(height: 16.0),
-            Text(
-              'Items',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            // Map<String, Map<String, String>> listItems = {
+            //       'item1': {'description': 'description1'},
+            //       'item2': {'description': 'description2'},
+            //       'item3': {'description': 'description3'},
+            //     };
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: listItems.length,
+              itemBuilder: (context, index) {
+                // listItems.keys returns a list of all the keys in the map
+                final itemName = listItems.keys.elementAt(index);
+                // final String itemDescription = listItems[itemName]['description'] ?? 'Description';
+                final String itemDescription = 'Description';
+
+                return ListTile(
+                  title: Text(itemName),
+                  subtitle: Text(itemDescription),
+                  onTap: () {
+                    // Show a popup component to edit the name and description of the item
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        String newName = itemName;
+                        String newDescription = itemDescription;
+
+                        return AlertDialog(
+                          title: Text('Edit Item'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFormField(
+                                initialValue: itemName,
+                                onChanged: (value) {
+                                  newName = value;
+                                },
+                              ),
+                              TextFormField(
+                                initialValue: itemDescription,
+                                onChanged: (value) {
+                                  newDescription = value;
+                                },
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                // Save the updated name and description
+                                setState(() {
+                                  // listItems[itemId]!['name'] = newName;
+                                  // listItems[itemId]!['description'] = newDescription;
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Text('Save'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
             ),
             // Display the list of items and allow updating their names and descriptions
             // You can use ListView.builder or any other widget to display the items

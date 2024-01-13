@@ -20,18 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // listBox = Hive.box<ListData>('lists');
-    // listBox.deleteFromDisk();
-
-    // try {
-    //   var data = globalBox.listBox.get('key');
-
-    //   print(data);
-    //   // Process data...
-    // } catch (e) {
-    //   print('Failed to read data: $e');
-    //   // Handle error...
-    // }
+    globalBox.listBox.clear();
   }
 
   @override

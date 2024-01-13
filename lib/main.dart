@@ -19,7 +19,6 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
   globalBox.listBox = await Hive.openBox<ListData>('lists');
-  // globalBox.listBox = await Hive.box('lists');
 
   print("starting");
   await dotenv.load(fileName: ".env");

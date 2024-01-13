@@ -97,9 +97,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../ListData.dart';
 import 'package:uuid/uuid.dart';
-import '../box.dart' as box;
+import '../ListData.dart';
+import '../box.dart' as globalBox;
 
 class CreateListScreen extends StatefulWidget {
   @override
@@ -137,10 +137,10 @@ class _CreateListScreenState extends State<CreateListScreen> {
         listId: listId,
         listName: listName,
         listDescription: listDescription,
-        items: _items,
+        items: _itemFields,
       );
 
-      box.listBox.add(newList);
+      globalBox.listBox.put(listId, newList);
       // _listNameController.clear();
       // _descriptionController.clear();
       // _itemNameController.clear();
@@ -216,9 +216,11 @@ class _CreateListScreenState extends State<CreateListScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _items[itemNameController.text] = {
-                                'description': itemDescriptionController.text,
-                              };
+                                _itemFields.add({
+                                'itemId': 'item-${Uuid().v1()}',  
+                                'itemName': itemNameController.text,
+                                'itemDescription': itemDescriptionController.text,
+                              });
                             });
                             Navigator.of(context).pop();
                           },
@@ -241,8 +243,9 @@ class _CreateListScreenState extends State<CreateListScreen> {
               child: ListView.builder(
                 itemCount: _items.length,
                 itemBuilder: (context, index) {
-                  String itemName = _items.keys.elementAt(index);
-                  String itemDescription = _items.values.elementAt(index)['description'] ?? '';
+                  var item = _items[index];
+                  String itemName = item.itemName ?? '';
+                  String itemDescription = item.itemDescription ?? '';
 
                   return GestureDetector(
                     onTap: () {

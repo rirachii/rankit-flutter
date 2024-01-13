@@ -83,7 +83,7 @@ class ListData extends HiveObject {
   late String listDescription;
 
   @HiveField(3)
-  late Map<String, Map<String, String>> items;
+  late List<Map<String, String>> items;
 
   ListData(
       {required this.listId,

@@ -9,7 +9,7 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/rankit_flutter.git
+   git clone https://github.com/rirachii/rankit_flutter.git
    ```
 
 2. Navigate to the project directory:

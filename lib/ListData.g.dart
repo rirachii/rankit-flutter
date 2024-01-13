@@ -21,8 +21,9 @@ class ListDataAdapter extends TypeAdapter<ListData> {
       listName: fields[1] as String,
       listDescription:
           fields[2] == null ? 'No description' : fields[2] as String,
-      items: (fields[3] as Map).map((dynamic k, dynamic v) =>
-          MapEntry(k as String, (v as Map).cast<String, String>())),
+      items: (fields[3] as List)
+          .map((dynamic e) => (e as Map).cast<String, String>())
+          .toList(),
     );
   }
 

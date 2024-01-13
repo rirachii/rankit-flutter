@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../ListData.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import '../ListData.dart';
 import '../box.dart' as globalBox;
 
 class EditListScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class EditListScreen extends StatefulWidget {
 class _EditListScreenState extends State<EditListScreen> {
   late String listName;
   late String listDescription;
-  late Map<String, Map<String, String>> listItems;
+  late List<Map<String, String>> listItems;
 
   @override
   void initState() {
@@ -69,10 +69,9 @@ class _EditListScreenState extends State<EditListScreen> {
               shrinkWrap: true,
               itemCount: listItems.length,
               itemBuilder: (context, index) {
-                // listItems.keys returns a list of all the keys in the map
-                final itemName = listItems.keys.elementAt(index);
-                // final String itemDescription = listItems[itemName]['description'] ?? 'Description';
-                final String itemDescription = 'Description';
+                Map<String, String> item = listItems[index];
+                String itemName = item["itemName"] ?? '';
+                String itemDescription = item["itemDescription"] ?? '';
 
                 return ListTile(
                   title: Text(itemName),
@@ -124,6 +123,21 @@ class _EditListScreenState extends State<EditListScreen> {
                 );
               },
             ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                // Update the list details
+                setState(() {
+                  final listObject = globalBox.listBox.get(widget.listId);
+                  listObject.listName = listName;
+                  listObject.listDescription = listDescription;
+                  listObject.items = listItems;
+                  listObject.save();
+                });
+              },
+              child: Text('Update List'),
+            ),
+
             // Display the list of items and allow updating their names and descriptions
             // You can use ListView.builder or any other widget to display the items
           ],

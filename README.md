@@ -36,9 +36,9 @@
 
 The part 'list_data.g.dart'; line is where the generated code will go. You need to run the hive_generator to generate the TypeAdapter for ListData and Item. You can do this by running the following command in your terminal:
 
-    ```bash
-    flutter packages pub run build_runner build
-    ```
+   ```bash
+   flutter packages pub run build_runner build
+   ```
 
 ## Contributing
 

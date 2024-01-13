@@ -11,19 +11,16 @@ class CreateListScreen extends StatefulWidget {
 }
 
 class _CreateListScreenState extends State<CreateListScreen> {
-  // late Box<ListData> listBox;
   final _formKey = GlobalKey<FormState>();
   final _listNameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _itemNameController = TextEditingController();
   final _itemDescriptionController = TextEditingController();
-  Map<String, Map<String, String>> _items = {};
   List<Map<String, String>> _itemFields = [];
 
   @override
   void initState() {
     super.initState();
-    // listBox = Hive.box<ListData>('lists');
   }
 
   void addList() {
@@ -32,10 +29,6 @@ class _CreateListScreenState extends State<CreateListScreen> {
       final listId = Uuid().v1();
       final listName = _listNameController.text;
       final listDescription = _descriptionController.text;
-      // final items = {
-      //   for (var field in _itemFields)
-      //     field['name'].text: {'description': field['description'].text}
-      // };
 
       final newList = ListData(
         listId: listId,
@@ -83,23 +76,15 @@ class _CreateListScreenState extends State<CreateListScreen> {
                 return null;
               },
             ),
-            // TextFormField(
-            //   controller: _itemsController,
-            //   decoration: InputDecoration(hintText: 'Items (comma separated)'),
-            //   validator: (value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter at least one item';
-            //     }
-            //     return null;
-            //   },
-            // ),
             ElevatedButton(
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    TextEditingController itemNameController = TextEditingController();
-                    TextEditingController itemDescriptionController = TextEditingController();
+                    TextEditingController itemNameController =
+                        TextEditingController();
+                    TextEditingController itemDescriptionController =
+                        TextEditingController();
 
                     return AlertDialog(
                       title: Text('Add Item'),
@@ -112,7 +97,8 @@ class _CreateListScreenState extends State<CreateListScreen> {
                           ),
                           TextFormField(
                             controller: itemDescriptionController,
-                            decoration: InputDecoration(hintText: 'Item Description'),
+                            decoration:
+                                InputDecoration(hintText: 'Item Description'),
                           ),
                         ],
                       ),
@@ -120,10 +106,11 @@ class _CreateListScreenState extends State<CreateListScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                                _itemFields.add({
-                                'itemId': 'item-${Uuid().v1()}',  
+                              _itemFields.add({
+                                'itemId': 'item-${Uuid().v1()}',
                                 'itemName': itemNameController.text,
-                                'itemDescription': itemDescriptionController.text,
+                                'itemDescription':
+                                    itemDescriptionController.text,
                               });
                             });
                             Navigator.of(context).pop();
@@ -157,8 +144,10 @@ class _CreateListScreenState extends State<CreateListScreen> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          TextEditingController itemNameController = TextEditingController(text: name);
-                          TextEditingController itemDescriptionController = TextEditingController(text: description);
+                          TextEditingController itemNameController =
+                              TextEditingController(text: name);
+                          TextEditingController itemDescriptionController =
+                              TextEditingController(text: description);
 
                           return AlertDialog(
                             title: Text('Edit Item'),
@@ -167,11 +156,13 @@ class _CreateListScreenState extends State<CreateListScreen> {
                               children: [
                                 TextFormField(
                                   controller: itemNameController,
-                                  decoration: InputDecoration(hintText: 'Item Name'),
+                                  decoration:
+                                      InputDecoration(hintText: 'Item Name'),
                                 ),
                                 TextFormField(
                                   controller: itemDescriptionController,
-                                  decoration: InputDecoration(hintText: 'Item Description'),
+                                  decoration: InputDecoration(
+                                      hintText: 'Item Description'),
                                 ),
                               ],
                             ),
@@ -181,7 +172,8 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                   setState(() {
                                     var item = _itemFields[index];
                                     item['itemName'] = itemNameController.text;
-                                    item['itemDescription'] = itemDescriptionController.text;
+                                    item['itemDescription'] =
+                                        itemDescriptionController.text;
                                   });
                                   Navigator.of(context).pop();
                                 },
@@ -207,7 +199,29 @@ class _CreateListScreenState extends State<CreateListScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: addList,
+              onPressed: () {
+                if (_itemFields.length == 0) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Please add an item.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  addList();
+                }
+              },
               child: Text('Add'),
             ),
           ],

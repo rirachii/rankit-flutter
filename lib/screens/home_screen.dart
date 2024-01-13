@@ -6,7 +6,6 @@ import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
 import '../box.dart' as globalBox;
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -37,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(hintText: 'Search...'),
         ),
       ),
-      
       body: ValueListenableBuilder(
         valueListenable: globalBox.listBox.listenable(),
         builder: (context, Box<dynamic> box, _) {
@@ -62,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(lists[index].listName),
                   subtitle: Text(lists[index].listDescription),
                 ),
-                
               );
             },
           );
@@ -78,5 +75,5 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(Icons.add),
       ),
     );
-    }
+  }
 }

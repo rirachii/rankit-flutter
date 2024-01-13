@@ -99,7 +99,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
 import 'package:uuid/uuid.dart';
-
+import '../box.dart' as box;
 
 class CreateListScreen extends StatefulWidget {
   @override
@@ -107,33 +107,44 @@ class CreateListScreen extends StatefulWidget {
 }
 
 class _CreateListScreenState extends State<CreateListScreen> {
-  late Box<ListData> listBox;
+  // late Box<ListData> listBox;
   final _formKey = GlobalKey<FormState>();
   final _listNameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _itemsController = TextEditingController();
-
+  final _itemNameController = TextEditingController();
+  final _itemDescriptionController = TextEditingController();
+  Map<String, Map<String, String>> _items = {};
+  List<Map<String, String>> _itemFields = [];
 
   @override
   void initState() {
     super.initState();
-    listBox = Hive.box<ListData>('lists');
+    // listBox = Hive.box<ListData>('lists');
   }
 
   void addList() {
     if (_formKey.currentState!.validate()) {
-      var uuid = Uuid();
+      final uuid = Uuid();
+      final listId = Uuid().v1();
+      final listName = _listNameController.text;
+      final listDescription = _descriptionController.text;
+      // final items = {
+      //   for (var field in _itemFields)
+      //     field['name'].text: {'description': field['description'].text}
+      // };
 
-      var listData = ListData(
-        listId: uuid.v1(),
-        listName: _listNameController.text,
-        listDescription: _descriptionController.text,
-        // items: _itemsController.text
-        //     .split(',')
-        //     .map((item) => ItemData(name: item.name))
-        //     .toList(),
+      final newList = ListData(
+        listId: listId,
+        listName: listName,
+        listDescription: listDescription,
+        items: _items,
       );
-      listBox.add(listData);
+
+      box.listBox.add(newList);
+      // _listNameController.clear();
+      // _descriptionController.clear();
+      // _itemNameController.clear();
+      // _itemDescriptionController.clear();
       Navigator.pop(context);
     }
   }
@@ -168,15 +179,125 @@ class _CreateListScreenState extends State<CreateListScreen> {
                 return null;
               },
             ),
-            TextFormField(
-              controller: _itemsController,
-              decoration: InputDecoration(hintText: 'Items (comma separated)'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter at least one item';
-                }
-                return null;
+            // TextFormField(
+            //   controller: _itemsController,
+            //   decoration: InputDecoration(hintText: 'Items (comma separated)'),
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter at least one item';
+            //     }
+            //     return null;
+            //   },
+            // ),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    TextEditingController itemNameController = TextEditingController();
+                    TextEditingController itemDescriptionController = TextEditingController();
+
+                    return AlertDialog(
+                      title: Text('Add Item'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            controller: itemNameController,
+                            decoration: InputDecoration(hintText: 'Item Name'),
+                          ),
+                          TextFormField(
+                            controller: itemDescriptionController,
+                            decoration: InputDecoration(hintText: 'Item Description'),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _items[itemNameController.text] = {
+                                'description': itemDescriptionController.text,
+                              };
+                            });
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Add'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
+              child: Text('Add Item'),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _items.length,
+                itemBuilder: (context, index) {
+                  String itemName = _items.keys.elementAt(index);
+                  String itemDescription = _items.values.elementAt(index)['description'] ?? '';
+
+                  return GestureDetector(
+                    onTap: () {
+                      // Handle item click here
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          TextEditingController itemNameController = TextEditingController(text: itemName);
+                          TextEditingController itemDescriptionController = TextEditingController(text: itemDescription);
+
+                          return AlertDialog(
+                            title: Text('Edit Item'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  controller: itemNameController,
+                                  decoration: InputDecoration(hintText: 'Item Name'),
+                                ),
+                                TextFormField(
+                                  controller: itemDescriptionController,
+                                  decoration: InputDecoration(hintText: 'Item Description'),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _items[itemNameController.text] = {
+                                      'description': itemDescriptionController.text,
+                                    };
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Save'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: ListTile(
+                      title: Text(itemName),
+                      subtitle: Text(itemDescription),
+                    ),
+                  );
+                },
+              ),
             ),
             ElevatedButton(
               onPressed: addList,

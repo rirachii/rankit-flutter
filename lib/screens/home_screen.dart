@@ -3,6 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
 import 'create_list_screen.dart';
+import 'edit_list_screen.dart';
+import '../box.dart' as globalBox;
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,18 +13,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Box<ListData> listBox;
+  // late Box<ListData> listBox;
 
   String filter = '';
 
   @override
   void initState() {
     super.initState();
-    listBox = Hive.box<ListData>('lists');
+    // listBox = Hive.box<ListData>('lists');
     // listBox.deleteFromDisk();
 
     try {
-      var data = listBox.get('key');
+      var data = globalBox.listBox.get('key');
 
       print(data);
       // Process data...
@@ -44,64 +47,35 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: InputDecoration(hintText: 'Search...'),
         ),
       ),
+      
       body: ValueListenableBuilder(
-        valueListenable: listBox.listenable(),
-        builder: (context, Box<ListData> box, _) {
-          var lists =
-              box.values.where((list) => list.listName.contains(filter)).toList();
+        valueListenable: globalBox.listBox.listenable(),
+        builder: git(context, Box<ListData> box, _) {
+          var lists = box.values
+              .where((list) => list.listName.contains(filter))
+              .toList();
           return ListView.builder(
             itemCount: lists.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(lists[index].listName),
-                subtitle: Text(lists[index].listDescription),
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditListScreen(
+                        listId: lists[index].listId,
+                      ),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  title: Text(lists[index].listName),
+                  subtitle: Text(lists[index].listDescription),
+                ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreateListScreen()),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-    );
-  }
+    );}
 }
-
-// class HomeScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             ElevatedButton(
-//               child: Text('Create List'),
-//               onPressed: () {
-//                 Navigator.pushNamed(context, '/createList');
-//               },
-//             ),
-//             ElevatedButton(
-//               child: Text('View List'),
-//               onPressed: () {
-//                 Navigator.pushNamed(context, '/list');
-//               },
-//             ),
-//             ElevatedButton(
-//               child: Text('Profile'),
-//               onPressed: () {
-//                 Navigator.pushNamed(context, '/profile');
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

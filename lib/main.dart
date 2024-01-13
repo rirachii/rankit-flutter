@@ -11,24 +11,20 @@ import 'package:supabase/supabase.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'ListData.dart';
-// import 'ListBox.dart';
-// import 'todo_data.dart';
+import 'box.dart' as box;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
 
+  await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
-  // Hive.registerAdapter(TodoAdapter());
+  await Hive.openBox<ListData>('lists');
+  box.listBox = await Hive.openBox('lists');
+
   print("starting");
   await dotenv.load(fileName: ".env");
   var apiUrl = dotenv.get("SUPA_URL");
   var apiKey = dotenv.get("API_KEY");
-
-  print(apiUrl);
-  // if (!Hive.isBoxOpen('lists')) {
-  await Hive.openBox<ListData>('lists');
-  // }
   final client = SupabaseClient(apiUrl, apiKey);
   runApp(MyApp(client: client));
 }

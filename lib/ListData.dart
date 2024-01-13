@@ -1,7 +1,6 @@
 // import 'package:hive/hive.dart';
 // // import 'ItemData.dart';
 
-
 // @HiveType(typeId: 0, adapterName: "MyListDataAdapter")
 // class ListData extends HiveObject {
 //   @HiveField(0)
@@ -67,6 +66,7 @@
 //     this.tags,
 //   });
 // }
+
 import 'package:hive/hive.dart';
 
 part 'ListData.g.dart';
@@ -82,5 +82,12 @@ class ListData extends HiveObject {
   @HiveField(2, defaultValue: 'No description')
   late String listDescription;
 
-  ListData({required this.listId, required this.listName, required this.listDescription});
+  @HiveField(3)
+  late Map<String, Map<String, String>> items;
+
+  ListData(
+      {required this.listId,
+      required this.listName,
+      required this.listDescription,
+      required this.items});
 }

@@ -38,10 +38,6 @@ class _CreateListScreenState extends State<CreateListScreen> {
       );
 
       globalBox.listBox.put(listId, newList);
-      // _listNameController.clear();
-      // _descriptionController.clear();
-      // _itemNameController.clear();
-      // _itemDescriptionController.clear();
       Navigator.pop(context);
     }
   }
@@ -68,7 +64,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
             ),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(hintText: 'Description'),
+              decoration: InputDecoration(hintText: 'List Description'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a description';
@@ -85,7 +81,6 @@ class _CreateListScreenState extends State<CreateListScreen> {
                         TextEditingController();
                     TextEditingController itemDescriptionController =
                         TextEditingController();
-
                     return AlertDialog(
                       title: Text('Add Item'),
                       content: Column(
@@ -94,25 +89,39 @@ class _CreateListScreenState extends State<CreateListScreen> {
                           TextFormField(
                             controller: itemNameController,
                             decoration: InputDecoration(hintText: 'Item Name'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a item name';
+                              }
+                              return null;
+                            },
                           ),
                           TextFormField(
                             controller: itemDescriptionController,
                             decoration:
                                 InputDecoration(hintText: 'Item Description'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a item description';
+                              }
+                              return null;
+                            },
                           ),
                         ],
                       ),
                       actions: [
                         ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              _itemFields.add({
-                                'itemId': 'item-${Uuid().v1()}',
-                                'itemName': itemNameController.text,
-                                'itemDescription':
-                                    itemDescriptionController.text,
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _itemFields.add({
+                                  'itemId': 'item-${Uuid().v1()}',
+                                  'itemName': itemNameController.text,
+                                  'itemDescription':
+                                      itemDescriptionController.text,
+                                });
                               });
-                            });
+                            }
                             Navigator.of(context).pop();
                           },
                           child: Text('Add'),
@@ -158,26 +167,70 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                   controller: itemNameController,
                                   decoration:
                                       InputDecoration(hintText: 'Item Name'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a item name';
+                                    }
+                                    return null;
+                                  },
                                 ),
                                 TextFormField(
                                   controller: itemDescriptionController,
                                   decoration: InputDecoration(
                                       hintText: 'Item Description'),
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        value.length > 0) {
+                                      return 'Please enter a item description';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ],
                             ),
                             actions: [
                               ElevatedButton(
                                 onPressed: () {
-                                  setState(() {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
                                     var item = _itemFields[index];
                                     item['itemName'] = itemNameController.text;
                                     item['itemDescription'] =
                                         itemDescriptionController.text;
                                   });
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Validation Error'),
+                                          content: Text('Please enter some text'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                  
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Save'),
+                                child: Text('Update'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _itemFields.removeAt(index);
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Delete'),
                               ),
                               ElevatedButton(
                                 onPressed: () {

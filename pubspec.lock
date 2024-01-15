@@ -277,6 +277,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.2"
+  implicitly_animated_reorderable_list_2:
+    dependency: "direct main"
+    description:
+      name: implicitly_animated_reorderable_list_2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1"
   io:
     dependency: transitive
     description:

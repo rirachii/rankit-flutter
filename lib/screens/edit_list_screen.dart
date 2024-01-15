@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../ListData.dart';
 import '../box.dart' as globalBox;
@@ -8,7 +6,7 @@ import '../box.dart' as globalBox;
 class EditListScreen extends StatefulWidget {
   final String listId;
 
-  EditListScreen({required this.listId});
+  const EditListScreen({super.key, required this.listId});
 
   @override
   _EditListScreenState createState() => _EditListScreenState();
@@ -18,11 +16,11 @@ class _EditListScreenState extends State<EditListScreen> {
   final _formKey = GlobalKey<FormState>();
   late String listName;
   late String listDescription;
-  late List<Map<String, String>> _itemFields;
+  late List<Map<String, String>> itemFields;
 
-  late TextEditingController _listNameController =
+  late final TextEditingController _listNameController =
       TextEditingController(text: listName);
-  late TextEditingController _descriptionController =
+  late final TextEditingController _descriptionController =
       TextEditingController(text: listDescription);
   final _itemNameController = TextEditingController();
   final _itemDescriptionController = TextEditingController();
@@ -33,14 +31,14 @@ class _EditListScreenState extends State<EditListScreen> {
     final listObject = globalBox.listBox.get(widget.listId);
     listName = listObject.listName;
     listDescription = listObject.listDescription;
-    _itemFields = listObject.items;
+    itemFields = listObject.items;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit list'),
+        title: const Text('Edit list'),
       ),
       body: Form(
         key: _formKey,
@@ -48,7 +46,7 @@ class _EditListScreenState extends State<EditListScreen> {
           children: <Widget>[
             TextFormField(
               controller: _listNameController,
-              decoration: InputDecoration(hintText: 'List Name'),
+              decoration: const InputDecoration(hintText: 'List Name'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a title';
@@ -58,7 +56,7 @@ class _EditListScreenState extends State<EditListScreen> {
             ),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(hintText: 'List Description'),
+              decoration: const InputDecoration(hintText: 'List Description'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a description';
@@ -77,18 +75,18 @@ class _EditListScreenState extends State<EditListScreen> {
                         TextEditingController();
 
                     return AlertDialog(
-                      title: Text('Add Item'),
+                      title: const Text('Add Item'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
                             controller: itemNameController,
-                            decoration: InputDecoration(hintText: 'Item Name'),
+                            decoration: const InputDecoration(hintText: 'Item Name'),
                           ),
                           TextFormField(
                             controller: itemDescriptionController,
                             decoration:
-                                InputDecoration(hintText: 'Item Description'),
+                                const InputDecoration(hintText: 'Item Description'),
                           ),
                         ],
                       ),
@@ -96,8 +94,8 @@ class _EditListScreenState extends State<EditListScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _itemFields.add({
-                                'itemId': 'item-${Uuid().v1()}',
+                              itemFields.add({
+                                'itemId': 'item-${const Uuid().v1()}',
                                 'itemName': itemNameController.text,
                                 'itemDescription':
                                     itemDescriptionController.text,
@@ -105,26 +103,26 @@ class _EditListScreenState extends State<EditListScreen> {
                             });
                             Navigator.of(context).pop();
                           },
-                          child: Text('Add'),
+                          child: const Text('Add'),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('Cancel'),
+                          child: const Text('Cancel'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Add Item'),
+              child: const Text('Add Item'),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: _itemFields.length,
+                itemCount: itemFields.length,
                 itemBuilder: (context, index) {
-                  var item = _itemFields[index];
+                  var item = itemFields[index];
                   String name = item["itemName"] ?? '';
                   String description = item["itemDescription"] ?? '';
 
@@ -140,18 +138,18 @@ class _EditListScreenState extends State<EditListScreen> {
                               TextEditingController(text: description);
 
                           return AlertDialog(
-                            title: Text('Edit Item'),
+                            title: const Text('Edit Item'),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 TextFormField(
                                   controller: itemNameController,
                                   decoration:
-                                      InputDecoration(hintText: 'Item Name'),
+                                      const InputDecoration(hintText: 'Item Name'),
                                 ),
                                 TextFormField(
                                   controller: itemDescriptionController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       hintText: 'Item Description'),
                                 ),
                               ],
@@ -160,29 +158,29 @@ class _EditListScreenState extends State<EditListScreen> {
                               ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    var item = _itemFields[index];
+                                    var item = itemFields[index];
                                     item['itemName'] = itemNameController.text;
                                     item['itemDescription'] =
                                         itemDescriptionController.text;
                                   });
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Update'),
+                                child: const Text('Update'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    _itemFields.removeAt(index);
+                                    itemFields.removeAt(index);
                                   });
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Delete'),
+                                child: const Text('Delete'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Cancel'),
+                                child: const Text('Cancel'),
                               ),
                             ],
                           );
@@ -199,19 +197,19 @@ class _EditListScreenState extends State<EditListScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (_itemFields.length == 0) {
+                if (itemFields.isEmpty) {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Must have 1 item.'),
+                        title: const Text('Error'),
+                        content: const Text('Must have 1 item.'),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('OK'),
+                            child: const Text('OK'),
                           ),
                         ],
                       );
@@ -222,26 +220,26 @@ class _EditListScreenState extends State<EditListScreen> {
                     ListData listObject = globalBox.listBox.get(widget.listId);
                     listObject.listName = _listNameController.text;
                     listObject.listDescription = _descriptionController.text;
-                    listObject.items = _itemFields;
+                    listObject.items = itemFields;
                     globalBox.listBox.put(widget.listId, listObject);
                   });
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('Update'),
+              child: const Text('Update'),
             ),
             ElevatedButton(
               onPressed: () {
                 globalBox.listBox.delete(widget.listId);
                 Navigator.of(context).pop();
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         ),

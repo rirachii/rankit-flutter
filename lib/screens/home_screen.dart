@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
 import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
+import 'rank_screen.dart';
 import '../box.dart' as globalBox;
 
 class HomeScreen extends StatefulWidget {
@@ -12,14 +13,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // late Box<ListData> listBox;
-
   String filter = '';
 
   @override
   void initState() {
     super.initState();
-    // globalBox.listBox.clear();
     print('started');
   }
 
@@ -50,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditListScreen(
+                      builder: (context) => RankScreen(
                         listId: lists[index].listId,
                       ),
                     ),
@@ -59,6 +57,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   title: Text(lists[index].listName),
                   subtitle: Text(lists[index].listDescription),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditListScreen(
+                            listId: lists[index].listId,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
             },

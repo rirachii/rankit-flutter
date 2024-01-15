@@ -122,6 +122,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                 });
                               });
                             }
+                            
                             Navigator.of(context).pop();
                           },
                           child: Text('Add'),

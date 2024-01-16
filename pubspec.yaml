@@ -37,7 +37,7 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_dotenv: ^5.1.0
   uuid: ^3.0.5
-  implicitly_animated_reorderable_list_2: ^0.5.1
+  implicitly_animated_reorderable_list_2: ^0.4.3
 
 dev_dependencies:
   flutter_test:

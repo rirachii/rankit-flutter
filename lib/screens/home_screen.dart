@@ -5,6 +5,7 @@ import '../ListData.dart';
 import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
 import 'rank_screen.dart';
+import 'list_reorder_screen.dart';
 import '../box.dart' as globalBox;
 
 class HomeScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RankScreen(
+                      builder: (context) => ListReorderScreen(
                         listId: lists[index].listId,
                       ),
                     ),

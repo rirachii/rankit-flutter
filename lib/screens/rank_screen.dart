@@ -12,17 +12,11 @@ class RankScreen extends StatefulWidget {
   _RankScreenState createState() => _RankScreenState();
 }
 
-enum ViewMode {
-  list,
-  grid,
-  tour,
-}
+
 
 class _RankScreenState extends State<RankScreen> {
-  final ViewMode _currentView = ViewMode.list;
   final _scrollController = ScrollController();
   final _gridViewKey = GlobalKey();
-  final _fruits = <String>["apple", "banana", "strawberry"];
   late String listName;
   late String listDescription;
   late List<Map<String, String>> itemFields;
@@ -53,66 +47,28 @@ class _RankScreenState extends State<RankScreen> {
       appBar: AppBar(
         title: const Text('Rank list'),
       ),
-            body: ReorderableBuilder(
-              scrollController: _scrollController,
-              onReorder: (List<OrderUpdateEntity> orderUpdateEntities) {
-                for (final orderUpdateEntity in orderUpdateEntities) {
-                  final fruit = _fruits.removeAt(orderUpdateEntity.oldIndex);
-                  _fruits.insert(orderUpdateEntity.newIndex, fruit);
-                }
-              },
-              builder: (children) {
-                return _buildBody(children);
-              },
-              children: generatedChildren,
-            ),
-          );
-        }
-
-        Widget _buildBody(List<Widget> children) {
-          if (_currentView == ViewMode.list) {
-            return ListView(
-              controller: _scrollController,
-              children: children,
-            );
-          } else if (_currentView == ViewMode.grid) {
-            return GridView(
-              key: _gridViewKey,
-              controller: _scrollController,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 10,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 5,
-              ),
-              children: children,
-            );
-          } else {
-            return Container(); // Empty container for tour view
+      body: ReorderableBuilder(
+        scrollController: _scrollController,
+        onReorder: (List<OrderUpdateEntity> orderUpdateEntities) {
+          for (final orderUpdateEntity in orderUpdateEntities) {
+            final itemField = itemFields.removeAt(orderUpdateEntity.oldIndex);
+            itemFields.insert(orderUpdateEntity.newIndex, itemField);
           }
-        }
-      }
-        // Body: ReorderableBuilder(){
-        // scrollController: _scrollController,
-        // onReorder: (List<OrderUpdateEntity> orderUpdateEntities) {
-        //   for (final orderUpdateEntity in orderUpdateEntities) {
-        //     final fruit = _fruits.removeAt(orderUpdateEntity.oldIndex);
-        //     _fruits.insert(orderUpdateEntity.newIndex, fruit);
-        //   }
-        // },
-        // builder: (children) {
-        //   return GridView(
-        //     key: _gridViewKey,
-        //     controller: _scrollController,
-        //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        //       crossAxisCount: 10,
-        //       mainAxisSpacing: 10,
-        //       crossAxisSpacing: 5,
-        //     ),
-        //     children: children,
-        //   );
-        // },
-        // children: generatedChildren,
-//       ),
-//     );
-//   }
-// }
+        },
+        builder: (children) {
+          return GridView(
+            key: _gridViewKey,
+            controller: _scrollController,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 10,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 5,
+            ),
+            children: children,
+          );
+        },
+        children: generatedChildren,
+      ),
+    );
+  }
+}

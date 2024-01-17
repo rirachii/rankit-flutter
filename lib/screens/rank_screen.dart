@@ -1,93 +1,118 @@
 import 'package:flutter/material.dart';
-import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
-import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
-import 'dart:ui';
-
+import 'package:flutter_reorderable_grid_view/entities/order_update_entity.dart';
+import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import '../box.dart' as globalBox;
 
 class RankScreen extends StatefulWidget {
   final String listId;
 
-  const RankScreen({Key? key, required this.listId}) : super(key: key);
+  const RankScreen({super.key, required this.listId});
 
   @override
   _RankScreenState createState() => _RankScreenState();
 }
 
+enum ViewMode {
+  list,
+  grid,
+  tour,
+}
+
 class _RankScreenState extends State<RankScreen> {
+  final ViewMode _currentView = ViewMode.list;
+  final _scrollController = ScrollController();
+  final _gridViewKey = GlobalKey();
+  final _fruits = <String>["apple", "banana", "strawberry"];
   late String listName;
   late String listDescription;
-  // late List<Map<String, String>> _items;
-  late List<Widget> _items;
+  late List<Map<String, String>> itemFields;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
     final listObject = globalBox.listBox.get(widget.listId);
     listName = listObject.listName;
     listDescription = listObject.listDescription;
-    // _items = listObject.items;
-    final items = listObject.items;
-    setState(() {
-      _items = items
-        .map((item) => ListTile(
-          key: Key(item['itemId']!),
-          title: Text(item['itemName']!),
-        ))
-        .toList();
-    });
-  }
-
-  Future<bool> _onReorder(int oldIndex, int newIndex) async {
-    setState(() {
-      int oldValue = _items[oldIndex];
-      _items.removeAt(oldIndex);
-      _items.insert(newIndex, oldValue);
-    });
-    _saveItems();
-    return true;
-  }
-
-  Future<void> _saveItems() async {
-    final box = await Hive.openBox<int>('myBox');
-    await box.clear();
-    for (var item in _items) {
-      await box.add(item);
-    }
+    itemFields = listObject.items;
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Rank Screen'),
-    ),
-    body: ReorderableList(
-      onReorder: _onReorder,
-      child: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ReorderableItem(
-            key: Key(_items[index]['itemId']!),
-            childBuilder: (BuildContext context, ReorderableItemState state) {
-              return Container(
-                child: ListTile(
-                  title: Text('Rank ${index + 1}: Item ${_items[index]['itemName']}'),
-                  leading: ReorderableListener(
-                    child: Icon(Icons.drag_handle),
-                  ),
-                ),
-              );
-            },
-          );
-        },
+  Widget build(BuildContext context) {
+    final generatedChildren = List.generate(
+      itemFields.length,
+      (index) => Container(
+        key: Key(itemFields[index]['itemId']!),
+        color: Color.fromARGB(255, 27, 159, 221),
+        child: Text(
+          itemFields[index]['itemName']!,
+        ),
       ),
-    ),
-  );
-}
+    );
 
-}
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rank list'),
+      ),
+            body: ReorderableBuilder(
+              scrollController: _scrollController,
+              onReorder: (List<OrderUpdateEntity> orderUpdateEntities) {
+                for (final orderUpdateEntity in orderUpdateEntities) {
+                  final fruit = _fruits.removeAt(orderUpdateEntity.oldIndex);
+                  _fruits.insert(orderUpdateEntity.newIndex, fruit);
+                }
+              },
+              builder: (children) {
+                return _buildBody(children);
+              },
+              children: generatedChildren,
+            ),
+          );
+        }
+
+        Widget _buildBody(List<Widget> children) {
+          if (_currentView == ViewMode.list) {
+            return ListView(
+              controller: _scrollController,
+              children: children,
+            );
+          } else if (_currentView == ViewMode.grid) {
+            return GridView(
+              key: _gridViewKey,
+              controller: _scrollController,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 10,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 5,
+              ),
+              children: children,
+            );
+          } else {
+            return Container(); // Empty container for tour view
+          }
+        }
+      }
+        // Body: ReorderableBuilder(){
+        // scrollController: _scrollController,
+        // onReorder: (List<OrderUpdateEntity> orderUpdateEntities) {
+        //   for (final orderUpdateEntity in orderUpdateEntities) {
+        //     final fruit = _fruits.removeAt(orderUpdateEntity.oldIndex);
+        //     _fruits.insert(orderUpdateEntity.newIndex, fruit);
+        //   }
+        // },
+        // builder: (children) {
+        //   return GridView(
+        //     key: _gridViewKey,
+        //     controller: _scrollController,
+        //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //       crossAxisCount: 10,
+        //       mainAxisSpacing: 10,
+        //       crossAxisSpacing: 5,
+        //     ),
+        //     children: children,
+        //   );
+        // },
+        // children: generatedChildren,
+//       ),
+//     );
+//   }
+// }

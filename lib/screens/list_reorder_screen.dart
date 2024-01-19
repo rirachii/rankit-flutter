@@ -72,6 +72,9 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: const Text('Rank list'),
+        ),
         body: reorderable.ReorderableList(
         onReorder: _reorderCallback,
         onReorderDone: _reorderDone,

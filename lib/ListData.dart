@@ -3,20 +3,9 @@
 
 // @HiveType(typeId: 0, adapterName: "MyListDataAdapter")
 // class ListData extends HiveObject {
-//   @HiveField(0)
-//   String listId;
-
-//   @HiveField(1)
-//   String listName;
-
-//   @HiveField(2)
-//   String listDescription;
-
-//   @HiveField(3)
-//   String? listImg;
 
 //   @HiveField(4)
-//   List<String>? items;
+//   String? listImgUrl;
 
 //   @HiveField(5)
 //   String? visibility;
@@ -86,8 +75,8 @@ class ListData extends HiveObject {
   late List<Map<String, String>> items;
 
   ListData(
-      {required this.listId,
-      required this.listName,
-      required this.listDescription,
-      required this.items});
+    {required this.listId,
+    required this.listName,
+    required this.listDescription,
+    required this.items});
 }

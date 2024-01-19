@@ -35,11 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Email Verification Required'),
-              content: Text('Please verify your email before logging in.'),
+              title: const Text('Email Verification Required'),
+              content: const Text('Please verify your email before logging in.'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -54,14 +54,14 @@ class _LoginScreenState extends State<LoginScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(
+            title: const Text(
               "Login Error!",
               style: TextStyle(color: Colors.red),
             ),
             content: Text(response.error!.message),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -77,12 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Account Created'),
-            content: Text(
+            title: const Text('Account Created'),
+            content: const Text(
                 'Your account has been created successfully. Please verify your email.'),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -94,14 +94,14 @@ class _LoginScreenState extends State<LoginScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(
+            title: const Text(
               "SignUp Error!",
               style: TextStyle(color: Colors.red),
             ),
             content: Text(response.error!.message),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -124,14 +124,14 @@ class _LoginScreenState extends State<LoginScreen> {
             children: <Widget>[
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
                 controller: _passwordController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
                 obscureText: true,

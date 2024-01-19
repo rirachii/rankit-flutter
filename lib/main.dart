@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rankit_flutter/screens/root_screen.dart';
 
 import 'screens/fb_login_screen.dart';
 import './screens/home_screen.dart';
@@ -7,8 +8,6 @@ import './screens/profile_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:supabase/supabase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'ListData.dart';
 import 'box.dart' as globalBox;
@@ -22,11 +21,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
   globalBox.listBox = await Hive.openBox<ListData>('lists');
-
-  // await dotenv.load(fileName: ".env");
-  // var apiUrl = dotenv.get("SUPA_URL");
-  // var apiKey = dotenv.get("API_KEY");
-  // final client = SupabaseClient(apiUrl, apiKey);
+  // globalBox.listBox.clear();
   runApp(const MyApp());
 }
 
@@ -41,10 +36,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/home',
+      initialRoute: '/',
       routes: {
-        // '/': (context) => LoginScreen(client: client),
-        '/': (context) => LoginScreen(),
+        '/': (context) => RootScreen(),
+        '/login': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
         '/createList': (context) => CreateListScreen(),
         '/profile': (context) => ProfileScreen(),

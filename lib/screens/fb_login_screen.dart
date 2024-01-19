@@ -38,16 +38,80 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text('Login'),
               onPressed: () async {
                 try {
-                  final user = await _auth.signInWithEmailAndPassword(
+                  final userCredential = await _auth.signInWithEmailAndPassword(
                     email: _emailController.text,
                     password: _passwordController.text,
                   );
-
-                  if (user != null) {
-                    // Navigate to the next screen
+                  if (userCredential.user != null) {
+                    if (userCredential.user!.emailVerified){
+                      Navigator.pushNamed(context, '/home');
+                    } 
+                    else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Login Error!'),
+                          content: const Text('Please verify your email address.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }
                 } catch (e) {
-                  print(e);
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Login Error!'),
+                      content: Text(e.toString()),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Register'),
+              onPressed: () async {
+                try {
+                  final userCredential = await _auth.createUserWithEmailAndPassword(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    
+                  );
+                  if (userCredential.user != null) {
+                    userCredential.user!.updateDisplayName(_emailController.text);
+                    await userCredential.user!.sendEmailVerification();
+                  }
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Registration Error!'),
+                      content: Text(e.toString()),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
                 }
               },
             ),

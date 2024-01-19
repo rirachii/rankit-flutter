@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import '../ListData.dart';
 import '../box.dart' as globalBox;
@@ -14,19 +13,18 @@ class _CreateListScreenState extends State<CreateListScreen> {
   final _formKey = GlobalKey<FormState>();
   final _listNameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _itemNameController = TextEditingController();
-  final _itemDescriptionController = TextEditingController();
-  List<Map<String, String>> _itemFields = [];
+  final List<Map<String, String>> _itemFields = [];
+  late User user;
 
   @override
   void initState() {
     super.initState();
+    user = FirebaseAuth.instance.currentUser!;
   }
 
   void addList() {
     if (_formKey.currentState!.validate()) {
-      final uuid = Uuid();
-      final listId = Uuid().v1();
+      final listId = const Uuid().v1();
       final listName = _listNameController.text;
       final listDescription = _descriptionController.text;
 
@@ -35,6 +33,17 @@ class _CreateListScreenState extends State<CreateListScreen> {
         listName: listName,
         listDescription: listDescription,
         items: _itemFields,
+        listImgUrl: '',
+        visibility: 'public',
+        dateCreated: DateTime.now(),
+        lastUpdated: DateTime.now(),
+        updateNote: '',
+        likes: 0,
+        completed: 0,
+        creatorId: user.uid,
+        creatorName: user.displayName,
+        creatorPfp: user.photoURL,
+        tags: [],
       );
 
       globalBox.listBox.put(listId, newList);
@@ -46,7 +55,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create a new list'),
+        title: const Text('Create a new list'),
       ),
       body: Form(
         key: _formKey,
@@ -54,7 +63,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
           children: <Widget>[
             TextFormField(
               controller: _listNameController,
-              decoration: InputDecoration(hintText: 'List Name'),
+              decoration: const InputDecoration(hintText: 'List Name'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a title';
@@ -64,7 +73,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
             ),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(hintText: 'List Description'),
+              decoration: const InputDecoration(hintText: 'List Description'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a description';
@@ -82,13 +91,13 @@ class _CreateListScreenState extends State<CreateListScreen> {
                     TextEditingController itemDescriptionController =
                         TextEditingController();
                     return AlertDialog(
-                      title: Text('Add Item'),
+                      title: const Text('Add Item'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
                             controller: itemNameController,
-                            decoration: InputDecoration(hintText: 'Item Name'),
+                            decoration: const InputDecoration(hintText: 'Item Name'),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a item name';
@@ -99,7 +108,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                           TextFormField(
                             controller: itemDescriptionController,
                             decoration:
-                                InputDecoration(hintText: 'Item Description'),
+                                const InputDecoration(hintText: 'Item Description'),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a item description';
@@ -115,7 +124,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                             if (_formKey.currentState!.validate()) {
                               setState(() {
                                 _itemFields.add({
-                                  'itemId': 'item-${Uuid().v1()}',
+                                  'itemId': 'item-${const Uuid().v1()}',
                                   'itemName': itemNameController.text,
                                   'itemDescription':
                                       itemDescriptionController.text,
@@ -125,20 +134,20 @@ class _CreateListScreenState extends State<CreateListScreen> {
                             
                             Navigator.of(context).pop();
                           },
-                          child: Text('Add'),
+                          child: const Text('Add'),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('Cancel'),
+                          child: const Text('Cancel'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Add Item'),
+              child: const Text('Add Item'),
             ),
             Expanded(
               child: ListView.builder(
@@ -160,14 +169,14 @@ class _CreateListScreenState extends State<CreateListScreen> {
                               TextEditingController(text: description);
 
                           return AlertDialog(
-                            title: Text('Edit Item'),
+                            title: const Text('Edit Item'),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 TextFormField(
                                   controller: itemNameController,
                                   decoration:
-                                      InputDecoration(hintText: 'Item Name'),
+                                      const InputDecoration(hintText: 'Item Name'),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a item name';
@@ -177,7 +186,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                 ),
                                 TextFormField(
                                   controller: itemDescriptionController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       hintText: 'Item Description'),
                                   validator: (value) {
                                     if (value == null ||
@@ -205,11 +214,11 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: Text('Validation Error'),
-                                          content: Text('Please enter some text'),
+                                          title: const Text('Validation Error'),
+                                          content: const Text('Please enter some text'),
                                           actions: <Widget>[
                                             TextButton(
-                                              child: Text('OK'),
+                                              child: const Text('OK'),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
@@ -222,7 +231,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                   
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Update'),
+                                child: const Text('Update'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
@@ -231,13 +240,13 @@ class _CreateListScreenState extends State<CreateListScreen> {
                                   });
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Delete'),
+                                child: const Text('Delete'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Cancel'),
+                                child: const Text('Cancel'),
                               ),
                             ],
                           );
@@ -259,14 +268,14 @@ class _CreateListScreenState extends State<CreateListScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Please add an item.'),
+                        title: const Text('Error'),
+                        content: const Text('Please add an item.'),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('OK'),
+                            child: const Text('OK'),
                           ),
                         ],
                       );
@@ -276,7 +285,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
                   addList();
                 }
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         ),

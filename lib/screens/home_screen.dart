@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../ListData.dart';
 import 'create_list_screen.dart';
@@ -33,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
               filter = value;
             });
           },
-          decoration: InputDecoration(hintText: 'Search...'),
+          decoration: const InputDecoration(hintText: 'Search...'),
         ),
       ),
       body: ValueListenableBuilder(
@@ -60,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(lists[index].listName),
                   subtitle: Text(lists[index].listDescription),
                   trailing: IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -85,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (context) => CreateListScreen()),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

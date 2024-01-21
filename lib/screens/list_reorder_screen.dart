@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as reorderable;
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
+    as reorderable;
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 
 class ListReorderScreen extends StatefulWidget {
@@ -72,10 +73,10 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Rank list'),
-        ),
-        body: reorderable.ReorderableList(
+      appBar: AppBar(
+        title: const Text('Rank list'),
+      ),
+      body: reorderable.ReorderableList(
         onReorder: _reorderCallback,
         onReorderDone: _reorderDone,
         child: CustomScrollView(

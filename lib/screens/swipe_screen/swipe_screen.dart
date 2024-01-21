@@ -5,7 +5,7 @@ import 'package:rankit_flutter/screens/list_reorder_screen.dart';
 import 'package:rankit_flutter/screens/swipe_screen/button.dart';
 import 'package:rankit_flutter/screens/swipe_screen/card.dart';
 
-import '../../box.dart' as globalBox;
+import '../../objects/box.dart' as global_box;
 
 
 class SwipeScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       _shakeCard();
     });
 
-    final listObject = globalBox.listBox.get(widget.listId);
+    final listObject = global_box.listBox.get(widget.listId);
     listName = listObject.listName;
     listDescription = listObject.listDescription;
     itemFields = listObject.items;
@@ -65,26 +65,26 @@ class _SwipeScreenState extends State<SwipeScreen> {
             SizedBox(
               height: 100,
               child: IconTheme.merge(
-                  data: const IconThemeData(size: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // TutorialAnimationButton(_shakeCard),
-                      // const SizedBox(
-                      //   width: 20,
-                      // ),
-                      swipeLeftButton(controller),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      swipeRightButton(controller),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      unswipeButton(controller),
-                    ],
-                  ),
-            ),
+                data: const IconThemeData(size: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // TutorialAnimationButton(_shakeCard),
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
+                    swipeLeftButton(controller),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    swipeRightButton(controller),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    unswipeButton(controller),
+                  ],
+                ),
+              ),
             )
             // add more SizedBox widgets as needed
           ],
@@ -106,14 +106,14 @@ class _SwipeScreenState extends State<SwipeScreen> {
     }
   }
 
- void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
+  void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
     // print('Left: $left');
     // print('Right: $right');
     // print('Top: $top');
     // print('Bottom: $bottom');
     switch (activity) {
       case Swipe():
-        switch (activity.direction){
+        switch (activity.direction) {
           case AxisDirection.left:
             left[previousIndex] = itemFields[previousIndex];
             break;
@@ -131,7 +131,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
         print('previous index: $previousIndex, target index: $targetIndex');
         break;
       case Unswipe():
-        switch (activity.direction){
+        switch (activity.direction) {
           case AxisDirection.left:
             left.remove(targetIndex);
             break;
@@ -144,7 +144,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
           case AxisDirection.down:
             bottom.remove(targetIndex);
             break;
-          }
+        }
         print('A ${activity.direction.name} swipe was undone.');
         print('previous index: $previousIndex, target index: $targetIndex');
         break;
@@ -179,5 +179,4 @@ class _SwipeScreenState extends State<SwipeScreen> {
       curve: Curves.easeInOut,
     );
   }
-
 }

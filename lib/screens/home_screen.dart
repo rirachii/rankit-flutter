@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../ListData.dart';
 import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
 import 'rank_screen.dart';
 import 'list_reorder_screen.dart';
 import 'swipe_screen/swipe_screen.dart';
-import '../box.dart' as globalBox;
+import '../objects/list_data.dart';
+import '../objects/box.dart' as global_box;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: ValueListenableBuilder(
-        valueListenable: globalBox.listBox.listenable(),
+        valueListenable: global_box.listBox.listenable(),
         builder: (context, Box<dynamic> box, _) {
           var lists = box.values
               .where((list) => list.listName.contains(filter))

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import '../ListData.dart';
-import '../box.dart' as globalBox;
+import '../objects/list_data.dart';
+import '../objects/item.dart';
+import '../objects/box.dart' as global_box;
 
 class EditListScreen extends StatefulWidget {
   final String listId;
@@ -16,7 +17,7 @@ class _EditListScreenState extends State<EditListScreen> {
   final _formKey = GlobalKey<FormState>();
   late String listName;
   late String listDescription;
-  late List<Map<String, String>> itemFields;
+  late List<Item> itemFields;
 
   late final TextEditingController _listNameController =
       TextEditingController(text: listName);
@@ -28,7 +29,7 @@ class _EditListScreenState extends State<EditListScreen> {
   @override
   void initState() {
     super.initState();
-    final listObject = globalBox.listBox.get(widget.listId);
+    final listObject = global_box.listBox.get(widget.listId);
     listName = listObject.listName;
     listDescription = listObject.listDescription;
     itemFields = listObject.items;
@@ -81,12 +82,13 @@ class _EditListScreenState extends State<EditListScreen> {
                         children: [
                           TextFormField(
                             controller: itemNameController,
-                            decoration: const InputDecoration(hintText: 'Item Name'),
+                            decoration:
+                                const InputDecoration(hintText: 'Item Name'),
                           ),
                           TextFormField(
                             controller: itemDescriptionController,
-                            decoration:
-                                const InputDecoration(hintText: 'Item Description'),
+                            decoration: const InputDecoration(
+                                hintText: 'Item Description'),
                           ),
                         ],
                       ),
@@ -94,12 +96,8 @@ class _EditListScreenState extends State<EditListScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              itemFields.add({
-                                'itemId': 'item-${const Uuid().v1()}',
-                                'itemName': itemNameController.text,
-                                'itemDescription':
-                                    itemDescriptionController.text,
-                              });
+                              Item item = Item(id: 'item-${const Uuid().v1()}', name: _itemNameController.text, description: _itemDescriptionController.text, imageUrl: 'imageFile?.path');
+                              itemFields.add(item);
                             });
                             Navigator.of(context).pop();
                           },
@@ -122,9 +120,9 @@ class _EditListScreenState extends State<EditListScreen> {
               child: ListView.builder(
                 itemCount: itemFields.length,
                 itemBuilder: (context, index) {
-                  var item = itemFields[index];
-                  String name = item["itemName"] ?? '';
-                  String description = item["itemDescription"] ?? '';
+                  Item item = itemFields[index];
+                  String name = item.getName;
+                  String description = item.getDescription;
 
                   return GestureDetector(
                     onTap: () {
@@ -144,8 +142,8 @@ class _EditListScreenState extends State<EditListScreen> {
                               children: [
                                 TextFormField(
                                   controller: itemNameController,
-                                  decoration:
-                                      const InputDecoration(hintText: 'Item Name'),
+                                  decoration: const InputDecoration(
+                                      hintText: 'Item Name'),
                                 ),
                                 TextFormField(
                                   controller: itemDescriptionController,
@@ -158,10 +156,9 @@ class _EditListScreenState extends State<EditListScreen> {
                               ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    var item = itemFields[index];
-                                    item['itemName'] = itemNameController.text;
-                                    item['itemDescription'] =
-                                        itemDescriptionController.text;
+                                    Item item = itemFields[index];
+                                    item.setName = itemNameController.text;
+                                    item.setDescription = itemDescriptionController.text;
                                   });
                                   Navigator.of(context).pop();
                                 },
@@ -217,11 +214,11 @@ class _EditListScreenState extends State<EditListScreen> {
                   );
                 } else {
                   setState(() {
-                    ListData listObject = globalBox.listBox.get(widget.listId);
+                    ListData listObject = global_box.listBox.get(widget.listId);
                     listObject.listName = _listNameController.text;
                     listObject.listDescription = _descriptionController.text;
                     listObject.items = itemFields;
-                    globalBox.listBox.put(widget.listId, listObject);
+                    global_box.listBox.put(widget.listId, listObject);
                   });
                   Navigator.of(context).pop();
                 }
@@ -230,7 +227,7 @@ class _EditListScreenState extends State<EditListScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                globalBox.listBox.delete(widget.listId);
+                global_box.listBox.delete(widget.listId);
                 Navigator.of(context).pop();
               },
               child: const Text('Delete'),

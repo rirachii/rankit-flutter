@@ -43,15 +43,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     password: _passwordController.text,
                   );
                   if (userCredential.user != null) {
-                    if (userCredential.user!.emailVerified){
+                    if (userCredential.user!.emailVerified) {
                       Navigator.pushNamed(context, '/home');
-                    } 
-                    else {
+                    } else {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Login Error!'),
-                          content: const Text('Please verify your email address.'),
+                          content:
+                              const Text('Please verify your email address.'),
                           actions: <Widget>[
                             TextButton(
                               child: const Text('OK'),
@@ -87,13 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text('Register'),
               onPressed: () async {
                 try {
-                  final userCredential = await _auth.createUserWithEmailAndPassword(
+                  final userCredential =
+                      await _auth.createUserWithEmailAndPassword(
                     email: _emailController.text,
                     password: _passwordController.text,
-                    
                   );
                   if (userCredential.user != null) {
-                    userCredential.user!.updateDisplayName(_emailController.text);
+                    userCredential.user!
+                        .updateDisplayName(_emailController.text);
                     await userCredential.user!.sendEmailVerification();
                   }
                 } catch (e) {

@@ -9,8 +9,8 @@ import './screens/profile_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'ListData.dart';
-import 'box.dart' as globalBox;
+import 'objects/list_data.dart';
+import 'objects/box.dart' as global_box;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,14 +20,13 @@ void main() async {
   );
   await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
-  globalBox.listBox = await Hive.openBox<ListData>('lists');
+  global_box.listBox = await Hive.openBox<ListData>('lists');
   // globalBox.listBox.clear();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-  
 
   @override
   Widget build(BuildContext context) {

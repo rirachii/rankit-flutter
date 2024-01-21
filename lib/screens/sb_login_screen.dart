@@ -36,7 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Email Verification Required'),
-              content: const Text('Please verify your email before logging in.'),
+              content:
+                  const Text('Please verify your email before logging in.'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('OK'),
@@ -153,7 +154,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:supabase/supabase.dart';

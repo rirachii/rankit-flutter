@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-
-part 'ListData.g.dart';
+import 'item.dart';
+part 'list_data.g.dart';
 
 @HiveType(typeId: 0)
 class ListData extends HiveObject {
@@ -14,7 +14,7 @@ class ListData extends HiveObject {
   late String listDescription;
 
   @HiveField(3)
-  late List<Map<String, String>> items;
+  late List<Item> items;
 
   @HiveField(4)
   late String? listImgUrl;
@@ -50,19 +50,19 @@ class ListData extends HiveObject {
   late List<String>? tags;
 
   ListData(
-    {required this.listId,
-    required this.listName,
-    required this.listDescription,
-    required this.items,
-    required this.listImgUrl,
-    required this.visibility,
-    required this.dateCreated,
-    required this.lastUpdated,
-    required this.updateNote,
-    required this.likes,
-    required this.completed,
-    required this.creatorId,
-    required this.creatorName,
-    required this.creatorPfp,
-    required this.tags});
+      {required this.listId,
+      required this.listName,
+      required this.listDescription,
+      required this.items,
+      required this.listImgUrl,
+      required this.visibility,
+      required this.dateCreated,
+      required this.lastUpdated,
+      required this.updateNote,
+      required this.likes,
+      required this.completed,
+      required this.creatorId,
+      required this.creatorName,
+      required this.creatorPfp,
+      required this.tags});
 }

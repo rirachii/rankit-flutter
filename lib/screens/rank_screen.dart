@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_grid_view/entities/order_update_entity.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
-import '../box.dart' as globalBox;
+import '../objects/box.dart' as global_box;
 
 class RankScreen extends StatefulWidget {
   final String listId;
@@ -11,8 +11,6 @@ class RankScreen extends StatefulWidget {
   @override
   _RankScreenState createState() => _RankScreenState();
 }
-
-
 
 class _RankScreenState extends State<RankScreen> {
   final _scrollController = ScrollController();
@@ -24,7 +22,7 @@ class _RankScreenState extends State<RankScreen> {
   @override
   void initState() {
     super.initState();
-    final listObject = globalBox.listBox.get(widget.listId);
+    final listObject = global_box.listBox.get(widget.listId);
     listName = listObject.listName;
     listDescription = listObject.listDescription;
     itemFields = listObject.items;

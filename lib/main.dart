@@ -24,11 +24,12 @@ void main() async {
   Hive.registerAdapter<Item>(ItemAdapter());
   global_box.listBox = await Hive.openBox<ListData>('lists');
   // globalBox.listBox.clear();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
         '/createList': (context) => CreateListScreen(),
         '/profile': (context) => ProfileScreen(),
       },
+      scaffoldMessengerKey: scaffoldMessengerKey,
+
     );
   }
 }

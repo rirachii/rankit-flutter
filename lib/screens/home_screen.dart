@@ -1,5 +1,7 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rankit_flutter/service/connectivity_service.dart';
 import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
 import 'rank_screen.dart';
@@ -13,12 +15,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ConnectivityService _connectivityService = ConnectivityService();
+
   String filter = '';
 
   @override
   void initState() {
     super.initState();
+    _connectivityService.connectivityController.stream.listen((status) {
+      if (status == ConnectivityResult.none) {
+        String connectionStatus;
+        switch (status) {
+          case ConnectivityResult.wifi:
+            connectionStatus = 'Connected to WiFi';
+            break;
+          case ConnectivityResult.mobile:
+            connectionStatus = 'Connected to Mobile Network';
+            break;
+          case ConnectivityResult.none:
+            connectionStatus = 'No Internet Connection';
+            break;
+          default:
+            connectionStatus = 'Internet Connection Status Unknown';
+            break;
+        }
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(connectionStatus),
+        duration: const Duration(seconds: 3),
+      ),
+      );}
+    });
+
     print('started');
+  }
+
+  @override
+  void dispose() {
+    _connectivityService.connectivityController.close();
+    super.dispose();
   }
 
   @override
@@ -80,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CreateListScreen()),
+            MaterialPageRoute(builder: (context) => const CreateListScreen()),
           );
         },
         child: const Icon(Icons.add),

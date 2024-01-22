@@ -5,7 +5,6 @@ import 'edit_list_screen.dart';
 import 'rank_screen.dart';
 import 'list_reorder_screen.dart';
 import 'swipe_screen/swipe_screen.dart';
-import '../objects/list_data.dart';
 import '../objects/box.dart' as global_box;
 
 class HomeScreen extends StatefulWidget {

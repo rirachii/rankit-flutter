@@ -1,7 +1,19 @@
-class Item {
+import 'package:hive/hive.dart';
+
+part 'item.g.dart';
+
+@HiveType(typeId: 1)
+class Item extends HiveObject{
+  @HiveField(0)
   String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   String description;
+
+  @HiveField(3)
   String imageUrl;
 
   String get getId {
@@ -37,5 +49,14 @@ class Item {
   }
 
   Item({required this.id, required this.name, required this.description, required this.imageUrl});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'imageUrl': imageUrl,
+    };
+  }
 
 }

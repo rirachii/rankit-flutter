@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'objects/list_data.dart';
+import '../objects/item.dart';
 import 'objects/box.dart' as global_box;
 
 void main() async {
@@ -20,6 +21,7 @@ void main() async {
   );
   await Hive.initFlutter();
   Hive.registerAdapter<ListData>(ListDataAdapter());
+  Hive.registerAdapter<Item>(ItemAdapter());
   global_box.listBox = await Hive.openBox<ListData>('lists');
   // globalBox.listBox.clear();
   runApp(const MyApp());

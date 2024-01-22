@@ -65,4 +65,28 @@ class ListData extends HiveObject {
       required this.creatorName,
       required this.creatorPfp,
       required this.tags});
+
+  Map<String, dynamic> toMap() { 
+    List<Map<String, dynamic>> itemsList = [];
+    for (Item item in items) {
+      itemsList.add(item.toMap());
+    }
+    return {
+      'listId': listId,
+      'listName': listName,
+      'listDescription': listDescription,
+      'items': itemsList,
+      'listImgUrl': listImgUrl,
+      'visibility': visibility,
+      'dateCreated': dateCreated,
+      'lastUpdated': lastUpdated,
+      'updateNote': updateNote,
+      'likes': likes,
+      'completed': completed,
+      'creatorId': creatorId,
+      'creatorName': creatorName,
+      'creatorPfp': creatorPfp,
+      'tags': tags,
+    };
+  }
 }

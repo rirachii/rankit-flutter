@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +26,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
   final List<Item> _itemFields = [];
   late User user;
   File? _imageFile;
-  String _listImgUrl = '';
+  late String _listImgUrl;
   String visibility = 'Private';
   final List<String> _tags = [];
 
@@ -35,13 +36,21 @@ class _CreateListScreenState extends State<CreateListScreen> {
     user = FirebaseAuth.instance.currentUser!;
   }
 
-  void uploadPublicImage(file) async {
-    final ref = FirebaseStorage.instance
-      .ref()
-      .child('Public Lists Images')
-      .child('${_listNameController.text}.png');
-    await ref.putFile(file);
-    _listImgUrl = await ref.getDownloadURL();
+  Future<void> uploadPublicImage(File file) async {
+  final storageReference = FirebaseStorage.instance
+    .ref()
+    .child('Public Lists Images/${_listNameController.text}.png');
+    final uploadTask = storageReference.putFile(file);
+
+    // You can even track progress of the file upload.
+    final taskSnapshot = await uploadTask.whenComplete(() {});
+    final downloadUrl = await taskSnapshot.ref.getDownloadURL();
+    _listImgUrl = downloadUrl;
+  }
+
+  void uploadPublicList(ListData newList) async {
+    CollectionReference ref = FirebaseFirestore.instance.collection('Public Lists');
+    await ref.add(newList.toMap());
   }
 
   void addList() {
@@ -50,7 +59,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
       final listName = _listNameController.text;
       final listDescription = _descriptionController.text;
 
-      uploadPublicImage(_imageFile);
+      uploadPublicImage(_imageFile!);
 
       final newList = ListData(
         listId: listId,
@@ -58,7 +67,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
         listDescription: listDescription,
         items: _itemFields,
         listImgUrl: _listImgUrl,
-        visibility: 'Private',
+        visibility: visibility,
         dateCreated: DateTime.now(),
         lastUpdated: DateTime.now(),
         updateNote: '',
@@ -69,8 +78,14 @@ class _CreateListScreenState extends State<CreateListScreen> {
         creatorPfp: user.photoURL,
         tags: [],
       );
-
+      
+      uploadPublicList(newList);
       global_box.listBox.put(listId, newList);
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$listName added successfully')),
+      );
       Navigator.pop(context);
     }
   }

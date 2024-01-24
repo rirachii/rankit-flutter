@@ -1,7 +1,11 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rankit_flutter/objects/list_data.dart';
 import 'package:rankit_flutter/service/connectivity_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'create_list_screen.dart';
 import 'edit_list_screen.dart';
 import 'rank_screen.dart';
@@ -16,36 +20,40 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ConnectivityService _connectivityService = ConnectivityService();
+  final Stream<QuerySnapshot> _listItemsStream = FirebaseFirestore.instance.collection('Public Lists').snapshots();
 
   String filter = '';
 
   @override
   void initState() {
     super.initState();
-    _connectivityService.connectivityController.stream.listen((status) {
-      if (status == ConnectivityResult.none) {
-        String connectionStatus;
-        switch (status) {
-          case ConnectivityResult.wifi:
-            connectionStatus = 'Connected to WiFi';
-            break;
-          case ConnectivityResult.mobile:
-            connectionStatus = 'Connected to Mobile Network';
-            break;
-          case ConnectivityResult.none:
-            connectionStatus = 'No Internet Connection';
-            break;
-          default:
-            connectionStatus = 'Internet Connection Status Unknown';
-            break;
-        }
-      ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(connectionStatus),
-        duration: const Duration(seconds: 3),
-      ),
-      );}
-    });
+
+    
+
+    // _connectivityService.connectivityController.stream.listen((status) {
+    //   if (status == ConnectivityResult.none) {
+    //     String connectionStatus;
+    //     switch (status) {
+    //       case ConnectivityResult.wifi:
+    //         connectionStatus = 'Connected to WiFi';
+    //         break;
+    //       case ConnectivityResult.mobile:
+    //         connectionStatus = 'Connected to Mobile Network';
+    //         break;
+    //       case ConnectivityResult.none:
+    //         connectionStatus = 'No Internet Connection';
+    //         break;
+    //       default:
+    //         connectionStatus = 'Internet Connection Status Unknown';
+    //         break;
+    //     }
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text(connectionStatus),
+    //     duration: const Duration(seconds: 3),
+    //   ),
+    //   );}
+    // });
 
     print('started');
   }
@@ -69,12 +77,29 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: const InputDecoration(hintText: 'Search...'),
         ),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: global_box.listBox.listenable(),
-        builder: (context, Box<dynamic> box, _) {
-          var lists = box.values
-              .where((list) => list.listName.contains(filter))
-              .toList();
+      body:StreamBuilder<QuerySnapshot>(
+      stream: _listItemsStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          
+          // List<ListData> lists = box.values
+          //     .where((list) => list.listName.contains(filter))
+          //     .toList();
+
+          List<ListData> lists = snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            
+            print(data);
+            return ListData.fromMap(data);
+          }).toList();
+
+          print(lists);
           return ListView.builder(
             itemCount: lists.length,
             itemBuilder: (context, index) {

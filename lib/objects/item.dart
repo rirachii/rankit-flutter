@@ -59,4 +59,13 @@ class Item extends HiveObject{
     };
   }
 
+  factory Item.fromMap(Map<String, dynamic> map) {
+    return Item(
+      id: map['id'],
+      name: map['name'],
+      description: map['description'],
+      imageUrl: map['imageUrl'],
+    );
+  }
+
 }

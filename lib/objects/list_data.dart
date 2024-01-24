@@ -89,4 +89,29 @@ class ListData extends HiveObject {
       'tags': tags,
     };
   }
+
+  factory ListData.fromMap(Map<String, dynamic> map) {
+    List<Item> itemsList = List<Item>.from(
+      (map['items'] as List<Map<String, dynamic>>)
+          .map((item) => Item.fromMap(item)),
+    );
+    
+    return ListData(
+      listId: map['listId'],
+      listName: map['listName'],
+      listDescription: map['listDescription'],
+      items: itemsList,
+      listImgUrl: map['listImgUrl'],
+      visibility: map['visibility'],
+      dateCreated: map['dateCreated'],
+      lastUpdated: map['lastUpdated'],
+      updateNote: map['updateNote'],
+      likes: map['likes'],
+      completed: map['completed'],
+      creatorId: map['creatorId'],
+      creatorName: map['creatorName'],
+      creatorPfp: map['creatorPfp'],
+      tags: map['tags'],
+    );
+  }
 }

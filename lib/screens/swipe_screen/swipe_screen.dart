@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:rankit_flutter/objects/list_data.dart';
+import 'package:rankit_flutter/objects/item.dart';
 import 'package:rankit_flutter/screens/list_reorder_screen.dart';
 import 'package:rankit_flutter/screens/swipe_screen/button.dart';
 import 'package:rankit_flutter/screens/swipe_screen/card.dart';
@@ -9,9 +11,9 @@ import '../../objects/box.dart' as global_box;
 
 
 class SwipeScreen extends StatefulWidget {
-  final String listId;
+  final ListData listData;
 
-  const SwipeScreen({Key? key, required this.listId}) : super(key: key);
+  const SwipeScreen({super.key, required this.listData});
 
   @override
   _SwipeScreenState createState() => _SwipeScreenState();
@@ -19,13 +21,15 @@ class SwipeScreen extends StatefulWidget {
 
 class _SwipeScreenState extends State<SwipeScreen> {
   final AppinioSwiperController controller = AppinioSwiperController();
-  late String listName;
-  late String listDescription;
-  late List<Map<String, String>> itemFields;
-  Map<int, Map<String, String>> left = {};
-  Map<int, Map<String, String>> right = {};
-  Map<int, Map<String, String>> top = {};
-  Map<int, Map<String, String>> bottom = {};
+  late String listId = widget.listData.listId;
+  late String listName= widget.listData.listName;
+  late String listDescription = widget.listData.listDescription;
+  late List<Item> itemFields = widget.listData.items;
+
+  Map<int, Item> left = {};
+  Map<int, Item> right = {};
+  Map<int, Item> top = {};
+  Map<int, Item> bottom = {};
 
   @override
   void initState() {
@@ -33,11 +37,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
     Future.delayed(const Duration(seconds: 1)).then((_) {
       _shakeCard();
     });
-
-    final listObject = global_box.listBox.get(widget.listId);
-    listName = listObject.listName;
-    listDescription = listObject.listDescription;
-    itemFields = listObject.items;
   }
 
   @override
@@ -99,7 +98,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => ListReorderScreen(
-            listId: widget.listId,
+            listId: listId,
           ),
         ),
       );

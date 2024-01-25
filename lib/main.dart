@@ -23,7 +23,7 @@ void main() async {
   Hive.registerAdapter<ListData>(ListDataAdapter());
   Hive.registerAdapter<Item>(ItemAdapter());
   global_box.listBox = await Hive.openBox<ListData>('lists');
-  // globalBox.listBox.clear();
+  global_box.listBox.clear();
   runApp(MyApp());
 }
 

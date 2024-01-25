@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../objects/item.dart';
+
 class SwipeCard extends StatelessWidget {
-  final Map<String, String> item;
+  final Item item;
 
   const SwipeCard({
     Key? key,
@@ -59,7 +61,7 @@ class SwipeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item['itemName']!,
+                      item.getName,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -70,7 +72,7 @@ class SwipeCard extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      item['itemDescription']!,
+                      item.getDescription,
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,

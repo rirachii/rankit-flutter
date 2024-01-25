@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'item.dart';
 part 'list_data.g.dart';
@@ -23,10 +24,10 @@ class ListData extends HiveObject {
   late String? visibility;
 
   @HiveField(6)
-  late DateTime dateCreated;
+  late Timestamp dateCreated;
 
   @HiveField(7)
-  late DateTime lastUpdated;
+  late Timestamp lastUpdated;
 
   @HiveField(8)
   late String? updateNote;
@@ -91,10 +92,10 @@ class ListData extends HiveObject {
   }
 
   factory ListData.fromMap(Map<String, dynamic> map) {
-    List<Item> itemsList = List<Item>.from(
-      (map['items'] as List<Map<String, dynamic>>)
-          .map((item) => Item.fromMap(item)),
-    );
+    List<Item> itemsList = [];
+    for (Map<String, dynamic> item in map['items']) {
+      itemsList.add(Item.fromMap(item));
+    }
     
     return ListData(
       listId: map['listId'],
@@ -103,6 +104,8 @@ class ListData extends HiveObject {
       items: itemsList,
       listImgUrl: map['listImgUrl'],
       visibility: map['visibility'],
+      // dateCreated: (map['dateCreated'] as Timestamp).toDate(),
+      // lastUpdated: (map['lastUpdated'] as Timestamp).toDate(),
       dateCreated: map['dateCreated'],
       lastUpdated: map['lastUpdated'],
       updateNote: map['updateNote'],
@@ -111,7 +114,8 @@ class ListData extends HiveObject {
       creatorId: map['creatorId'],
       creatorName: map['creatorName'],
       creatorPfp: map['creatorPfp'],
-      tags: map['tags'],
+      tags: List<String>.from(map['tags']),
     );
   }
+
 }

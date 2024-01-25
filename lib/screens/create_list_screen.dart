@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rankit_flutter/service/firestore_service.dart';
 import 'package:uuid/uuid.dart';
 import '../objects/list_data.dart';
 import '../objects/item.dart';
@@ -48,18 +49,13 @@ class _CreateListScreenState extends State<CreateListScreen> {
     _listImgUrl = downloadUrl;
   }
 
-  void uploadPublicList(ListData newList) async {
-    CollectionReference ref = FirebaseFirestore.instance.collection('Public Lists');
-    await ref.add(newList.toMap());
-  }
-
-  void addList() {
+  void addList() async {
     if (_formKey.currentState!.validate()) {
       final listId = const Uuid().v1();
       final listName = _listNameController.text;
       final listDescription = _descriptionController.text;
 
-      uploadPublicImage(_imageFile!);
+      await uploadPublicImage(_imageFile!);
 
       final newList = ListData(
         listId: listId,
@@ -68,8 +64,8 @@ class _CreateListScreenState extends State<CreateListScreen> {
         items: _itemFields,
         listImgUrl: _listImgUrl,
         visibility: visibility,
-        dateCreated: DateTime.now(),
-        lastUpdated: DateTime.now(),
+        dateCreated: Timestamp.now(),
+        lastUpdated: Timestamp.now(),
         updateNote: '',
         likes: 1,
         completed: 0,
@@ -79,14 +75,11 @@ class _CreateListScreenState extends State<CreateListScreen> {
         tags: [],
       );
       
-      uploadPublicList(newList);
+      FirestoreService.create('Public Lists', listId, newList.toMap());
       global_box.listBox.put(listId, newList);
 
       // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$listName added successfully')),
-      );
-      Navigator.pop(context);
+      
     }
   }
 
@@ -397,7 +390,11 @@ class _CreateListScreenState extends State<CreateListScreen> {
                     },
                   );
                 } else {
-                  addList();
+                  addList(); 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$_listNameController.text added successfully')),
+                  );
+                  Navigator.pop(context);
                 }
               },
               child: const Text('Add'),

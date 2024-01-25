@@ -1,38 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
 import '../objects/list_data.dart';
 import '../objects/item.dart';
-import '../objects/box.dart' as global_box;
+import '../service/firestore_service.dart';
 
 class EditListScreen extends StatefulWidget {
-  final String listId;
+  final ListData listData;
 
-  const EditListScreen({super.key, required this.listId});
-
+  const EditListScreen({super.key, required this.listData});
+  
   @override
   _EditListScreenState createState() => _EditListScreenState();
+  
 }
 
 class _EditListScreenState extends State<EditListScreen> {
   final _formKey = GlobalKey<FormState>();
-  late String listName;
-  late String listDescription;
-  late List<Item> itemFields;
+  final String collection = "Public Lists";
+  late String listId = widget.listData.listId;
+  late String listName= widget.listData.listName;
+  late String listDescription = widget.listData.listDescription;
+  late List<Item> itemFields = widget.listData.items;
 
   late final TextEditingController _listNameController =
       TextEditingController(text: listName);
   late final TextEditingController _descriptionController =
       TextEditingController(text: listDescription);
-  final _itemNameController = TextEditingController();
-  final _itemDescriptionController = TextEditingController();
+  // final _itemNameController = TextEditingController();
+  // final _itemDescriptionController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    final listObject = global_box.listBox.get(widget.listId);
-    listName = listObject.listName;
-    listDescription = listObject.listDescription;
-    itemFields = listObject.items;
+  }
+
+
+  void updateList() async {
+    ListData listObject = widget.listData;
+    listObject.listName = _listNameController.text;
+    listObject.listDescription = _descriptionController.text;
+    listObject.items = itemFields;
+    FirestoreService.update(collection, listId, listObject.toMap());
   }
 
   @override
@@ -96,7 +105,7 @@ class _EditListScreenState extends State<EditListScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              Item item = Item(id: 'item-${const Uuid().v1()}', name: _itemNameController.text, description: _itemDescriptionController.text, imageUrl: 'imageFile?.path');
+                              Item item = Item(id: 'item-${const Uuid().v1()}', name: itemNameController.text, description: itemDescriptionController.text, imageUrl: 'imageFile?.path');
                               itemFields.add(item);
                             });
                             Navigator.of(context).pop();
@@ -213,13 +222,7 @@ class _EditListScreenState extends State<EditListScreen> {
                     },
                   );
                 } else {
-                  setState(() {
-                    ListData listObject = global_box.listBox.get(widget.listId);
-                    listObject.listName = _listNameController.text;
-                    listObject.listDescription = _descriptionController.text;
-                    listObject.items = itemFields;
-                    global_box.listBox.put(widget.listId, listObject);
-                  });
+                  updateList();
                   Navigator.of(context).pop();
                 }
               },
@@ -227,7 +230,7 @@ class _EditListScreenState extends State<EditListScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                global_box.listBox.delete(widget.listId);
+                FirestoreService.delete(collection, listId);
                 Navigator.of(context).pop();
               },
               child: const Text('Delete'),

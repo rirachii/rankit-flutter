@@ -119,7 +119,7 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return Item(
+                      return ListItem(
                         data: _items[index],
                         // first and last attributes affect border drawn during dragging
                         isFirst: index == 0,
@@ -137,8 +137,8 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   }
 }
 
-class Item extends StatelessWidget {
-  const Item({
+class ListItem extends StatelessWidget {
+  const ListItem({
     Key? key,
     required this.data,
     required this.isFirst,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rankit_flutter/objects/list_data.dart';
 import 'package:rankit_flutter/service/connectivity_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -91,15 +90,12 @@ class _HomeScreenState extends State<HomeScreen> {
           // List<ListData> lists = box.values
           //     .where((list) => list.listName.contains(filter))
           //     .toList();
-
           List<ListData> lists = snapshot.data!.docs.map((DocumentSnapshot document) {
             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-            
-            print(data);
             return ListData.fromMap(data);
-          }).toList();
+          }).where((list) => list.listName.contains(filter)).toList();
+          
 
-          print(lists);
           return ListView.builder(
             itemCount: lists.length,
             itemBuilder: (context, index) {
@@ -109,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SwipeScreen(
-                        listId: lists[index].listId,
+                        listData: lists[index],
                       ),
                     ),
                   );
@@ -124,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditListScreen(
-                            listId: lists[index].listId,
+                            listData: lists[index],
                           ),
                         ),
                       );

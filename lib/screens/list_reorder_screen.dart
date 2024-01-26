@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
     as reorderable;
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
+import 'package:rankit_flutter/objects/item.dart';
+import 'package:rankit_flutter/objects/list_data.dart';
 
 class ListReorderScreen extends StatefulWidget {
-  final String listId;
+  final ListData listData;
 
-  const ListReorderScreen({Key? key, required this.listId}) : super(key: key);
+  const ListReorderScreen({Key? key, required this.listData}) : super(key: key);
 
   @override
   _ListReorderScreenState createState() => _ListReorderScreenState();
 }
 
-class ItemData {
-  ItemData(this.title, this.key);
-  final String title;
-  final Key key;
-}
+// class ItemData {
+//   ItemData(this.title, this.key);
+//   final String title;
+//   final Key key;
+// }
 
 enum DraggingMode {
   iOS,
@@ -24,30 +26,28 @@ enum DraggingMode {
 }
 
 class _ListReorderScreenState extends State<ListReorderScreen> {
-  late List<ItemData> _items;
-  _ListReorderScreenState() {
-    _items = [];
-    for (int i = 0; i < 500; ++i) {
-      String label = "List item $i";
-      if (i == 5) {
-        label += ". This item has a long label and will be wrapped.";
-      }
-      _items.add(ItemData(label, ValueKey(i)));
+  late List<Item> _items;
+
+  @override
+  void initState() {
+    super.initState();
+    _items = widget.listData.items;
+    int i = 0;
+    for (Item item in _items) {
+      item.setRank = ValueKey(i);
+      i++;
     }
   }
 
-  // Returns index of item with given key
   int _indexOfKey(Key key) {
-    return _items.indexWhere((ItemData d) => d.key == key);
+    return _items.indexWhere((Item d) => d.rank == key);
+
   }
+
 
   bool _reorderCallback(Key item, Key newPosition) {
     int draggingIndex = _indexOfKey(item);
     int newPositionIndex = _indexOfKey(newPosition);
-
-    // Uncomment to allow only even target reorder possition
-    // if (newPositionIndex % 2 == 1)
-    //   return false;
 
     final draggedItem = _items[draggingIndex];
     setState(() {
@@ -59,8 +59,10 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   }
 
   void _reorderDone(Key item) {
+    // Save the new order to your data source
     final draggedItem = _items[_indexOfKey(item)];
-    debugPrint("Reordering finished for ${draggedItem.title}}");
+    debugPrint("Reordering finished for ${draggedItem.name}}");
+    
   }
 
   //
@@ -73,14 +75,12 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rank list'),
-      ),
       body: reorderable.ReorderableList(
         onReorder: _reorderCallback,
         onReorderDone: _reorderDone,
+        // _saveOrder: _saveOrder,
         child: CustomScrollView(
-          // cacheExtent: 3000,
+          cacheExtent: 3000,
           slivers: <Widget>[
             SliverAppBar(
               actions: <Widget>[
@@ -115,7 +115,7 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
             ),
             SliverPadding(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom),
+                  bottom: MediaQuery.of(context).padding.bottom),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
@@ -146,11 +146,12 @@ class ListItem extends StatelessWidget {
     required this.draggingMode,
   }) : super(key: key);
 
-  final ItemData data;
+  final Item data;
   final bool isFirst;
   final bool isLast;
   final DraggingMode draggingMode;
 
+  
   Widget _buildChild(BuildContext context, ReorderableItemState state) {
     BoxDecoration decoration;
 
@@ -161,14 +162,14 @@ class ListItem extends StatelessWidget {
     } else {
       bool placeholder = state == ReorderableItemState.placeholder;
       decoration = BoxDecoration(
-          border: Border(
-              top: isFirst && !placeholder
-                  ? Divider.createBorderSide(context) //
-                  : BorderSide.none,
-              bottom: isLast && placeholder
-                  ? BorderSide.none //
-                  : Divider.createBorderSide(context)),
-          color: placeholder ? null : Colors.white);
+        border: Border(
+          top: isFirst && !placeholder
+            ? Divider.createBorderSide(context) //
+            : BorderSide.none,
+          bottom: isLast && placeholder
+            ? BorderSide.none //
+            : Divider.createBorderSide(context)),
+        color: placeholder ? null : Colors.white);
     }
 
     // For iOS dragging mode, there will be drag handle on the right that triggers
@@ -198,12 +199,23 @@ class ListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14.0, horizontal: 14.0),
-                    child: Text(data.title,
-                        style: Theme.of(context).textTheme.titleMedium),
-                  )),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${data.rank}', // Display the ranking
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            data.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   // Triggers the reordering
                   dragHandle,
                 ],
@@ -225,7 +237,8 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ReorderableItem(
-        key: data.key, //
-        childBuilder: _buildChild);
+      key: data.rank!,
+      childBuilder: _buildChild
+    );
   }
 }

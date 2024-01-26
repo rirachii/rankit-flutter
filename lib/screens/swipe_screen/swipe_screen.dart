@@ -98,7 +98,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => ListReorderScreen(
-            listId: listId,
+            listData: widget.listData,
           ),
         ),
       );

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 part 'item.g.dart';
@@ -15,6 +16,9 @@ class Item extends HiveObject{
 
   @HiveField(3)
   String imageUrl;
+
+  @HiveField(4)
+  Key? rank;
 
   String get getId {
     return id;
@@ -46,6 +50,14 @@ class Item extends HiveObject{
 
   set setImageUrl(String newImageUrl) {
     imageUrl = newImageUrl;
+  }
+
+  Key? get getRank {
+    return rank;
+  }
+
+  set setRank(Key newRank) {
+    rank = newRank;
   }
 
   Item({required this.id, required this.name, required this.description, required this.imageUrl});

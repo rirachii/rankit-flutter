@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SwipeScreen(
+                      builder: (context) => ListReorderScreen(
                         listData: lists[index],
                       ),
                     ),

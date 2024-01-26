@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => RootScreen(),
         '/login': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
-        '/createList': (context) => CreateListScreen(),
+        '/createList': (context) => const CreateListScreen(),
         '/profile': (context) => ProfileScreen(),
       },
       scaffoldMessengerKey: scaffoldMessengerKey,

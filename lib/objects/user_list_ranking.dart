@@ -1,11 +1,14 @@
 class UserListRanking {
   String userId;
   String listId;
+  String visibility;
   Map<String, int> ranks;
+
 
   UserListRanking({
     required this.userId,
     required this.listId,
+    required this.visibility,
     required this.ranks,
   });
 

@@ -4,6 +4,7 @@ import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:rankit_flutter/objects/item.dart';
 import 'package:rankit_flutter/objects/list_data.dart';
+import 'package:rankit_flutter/objects/user_list_ranking.dart';
 
 class ListReorderScreen extends StatefulWidget {
   final ListData listData;
@@ -14,12 +15,6 @@ class ListReorderScreen extends StatefulWidget {
   _ListReorderScreenState createState() => _ListReorderScreenState();
 }
 
-// class ItemData {
-//   ItemData(this.title, this.key);
-//   final String title;
-//   final Key key;
-// }
-
 enum DraggingMode {
   iOS,
   android,
@@ -27,6 +22,8 @@ enum DraggingMode {
 
 class _ListReorderScreenState extends State<ListReorderScreen> {
   late List<Item> _items;
+  // final UserListRanking _userListRanking = UserListRanking();
+  final Map<String, int> ranks = {};
 
   @override
   void initState() {
@@ -35,6 +32,7 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
     int i = 0;
     for (Item item in _items) {
       item.setRank = ValueKey(i);
+      ranks[item.id] = i;
       i++;
     }
   }
@@ -49,7 +47,7 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
     int draggingIndex = _indexOfKey(item);
     int newPositionIndex = _indexOfKey(newPosition);
 
-    final draggedItem = _items[draggingIndex];
+    final Item draggedItem = _items[draggingIndex];
     setState(() {
       debugPrint("Reordering $item -> $newPosition");
       _items.removeAt(draggingIndex);
@@ -109,9 +107,9 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
               ],
               pinned: true,
               expandedHeight: 150.0,
-              flexibleSpace: const FlexibleSpaceBar(
-                title: Text('Demo'),
-              ),
+              // flexibleSpace: const FlexibleSpaceBar(
+              //   title: Text('Demo'),
+              // ),
             ),
             SliverPadding(
                 padding: EdgeInsets.only(

@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AnimatedListScreen()
+                      builder: (context) => const LanguagePage(),
                         // listData: lists[index],
                       // ),
                     ),

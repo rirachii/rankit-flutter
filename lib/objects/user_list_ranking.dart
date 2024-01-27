@@ -12,16 +12,20 @@ class UserListRanking {
     required this.ranks,
   });
 
-  // ...
-
+  factory UserListRanking.fromMap(Map<String, dynamic> map) {
+    return UserListRanking(
+      userId: map['userId'],
+      listId: map['listId'],
+      visibility: map['visibility'],
+      ranks: map['ranks'],
+    );
+  }
+  
   Map<String, dynamic> toMap() {
-    // Sort the ranks map by value
-    // var sortedRanks = ranks.entries.toList()
-    //   ..sort((a, b) => a.value.compareTo(b.value));
-
     return {
       'userId': userId,
       'listId': listId,
+      'visibility': visibility,
       'ranks': ranks,
     };
   }

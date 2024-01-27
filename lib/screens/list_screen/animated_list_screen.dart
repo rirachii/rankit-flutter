@@ -1,18 +1,26 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
 import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
-import 'package:rankit_flutter/screens/list_screen/test_page.dart';
+import 'package:rankit_flutter/objects/item.dart';
+import 'package:rankit_flutter/objects/list_data.dart';
+import 'package:rankit_flutter/objects/user_list_ranking.dart';
+import 'package:rankit_flutter/screens/home_screen.dart';
+import 'package:rankit_flutter/service/firestore_service.dart';
+import 'package:uuid/uuid.dart';
 
-import 'utils/util.dart';
-// import 'ui.dart';
+import 'utils/box.dart';
+
+// import 'utils/util.dart';
 
 class LanguagePage extends StatefulWidget {
+  final ListData listData;
+
   const LanguagePage({
-    Key? key,
-  }) : super(key: key);
+    Key? key, required this.listData}) : super(key: key);
 
   @override
   _LanguagePageState createState() => _LanguagePageState();
@@ -26,53 +34,92 @@ class _LanguagePageState extends State<LanguagePage>
     'Test',
   ];
 
-  final List<Language> selectedLanguages = [
-    english,
-    german,
-    spanish,
-    french,
-  ];
-
+  late List<Item> _items;
+  late User user;
   bool inReorder = false;
 
   ScrollController scrollController = ScrollController();
 
-  void onReorderFinished(List<Language> newItems) {
-    scrollController.jumpTo(scrollController.offset);
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser!;
+
+    _items = widget.listData.items;
+    int i = 0;
+    for (Item item in _items) {
+      item.setRank = ValueKey(i);
+      i++;
+    }
+  }
+
+  
+
+  void onReorderFinished(List<Item> newItems) {
+    // scrollController.jumpTo(scrollController.offset);
     setState(() {
       inReorder = false;
 
-      selectedLanguages
+      _items
         ..clear()
         ..addAll(newItems);
     });
   }
 
+  void saveRanks() {
+    final Map<String, int> ranks = {};
+    int i = 0;
+    for (Item item in _items) {
+      ranks[item.name] = i;
+      i++;
+    }
+
+    final UserListRanking _userListRanking = UserListRanking(
+      listId: widget.listData.listId,
+      userId: user.uid,
+      visibility: "Private",
+      ranks: ranks,
+    );
+    
+    FirestoreService.create("User Rankings", const Uuid().v1(), _userListRanking.toMap());
+    print(_items.map((item) => item.name).toList());
+    print(ranks);
+    // FirestoreService.create("List Rankings", widget.listData.listId, _userListRanking.toMap());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    // final theme = Theme.of(context);
+    // final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('List Ranking'),
         backgroundColor: Colors.yellow.shade800,
-        actions: <Widget>[
-          _buildPopupMenuButton(textTheme),
-        ],
+        // actions: <Widget>[
+        //   _buildPopupMenuButton(textTheme),
+        // ],
       ),
       body: ListView(
         controller: scrollController,
         // Prevent the ListView from scrolling when an item is
         // currently being dragged.
-        padding: const EdgeInsets.only(bottom: 24),
+        // padding: const EdgeInsets.only(bottom: 24),
         children: <Widget>[
-          _buildHeadline('Vertically'),
+          // _buildHeadline('Vertically'),
           const Divider(height: 0),
           _buildVerticalLanguageList(),
-          _buildHeadline('Horizontally'),
-          _buildHorizontalLanguageList(),
-          const SizedBox(height: 500),
+          // _buildHeadline('Horizontally'),
+          // _buildHorizontalLanguageList(),
+          const SizedBox(height: 100),
+          ElevatedButton(
+            onPressed: () {
+              saveRanks();
+              
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
         ],
       ),
     );
@@ -80,19 +127,18 @@ class _LanguagePageState extends State<LanguagePage>
 
   // * An example of a vertically reorderable list.
   Widget _buildVerticalLanguageList() {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
-    Reorderable buildReorderable(
-      Language lang,
-      Widget Function(Widget tile) transition,
-    ) {
+    Reorderable buildReorderable( Item item,
+      Widget Function(Widget tile) transition) 
+    {
       return Reorderable(
-        key: ValueKey(lang),
+        key: ValueKey(item.getRank),
         builder: (context, dragAnimation, inDrag) {
           final tile = Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildTile(lang),
+              _buildTile(item),
               const Divider(height: 0),
             ],
           );
@@ -114,12 +160,12 @@ class _LanguagePageState extends State<LanguagePage>
       );
     }
 
-    return ImplicitlyAnimatedReorderableList<Language>(
-      items: selectedLanguages,
+    return ImplicitlyAnimatedReorderableList<Item>(
+      items: _items,
       shrinkWrap: true,
       reorderDuration: const Duration(milliseconds: 200),
       liftDuration: const Duration(milliseconds: 300),
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const ScrollPhysics(),
       padding: EdgeInsets.zero,
       areItemsTheSame: (oldItem, newItem) => oldItem == newItem,
       onReorderStarted: (item, index) => setState(() => inReorder = true),
@@ -127,18 +173,27 @@ class _LanguagePageState extends State<LanguagePage>
         // Update the underlying data when the item has been reordered!
         onReorderFinished(newItems);
       },
-      itemBuilder: (context, itemAnimation, lang, index) {
-        return buildReorderable(lang, (tile) {
+      itemBuilder: (context, itemAnimation, item, index) {
+        final t = itemAnimation.value;
+        final color = Color.lerp(Colors.white, Colors.white.withOpacity(0.8), t);
+        final elevation = lerpDouble(0, 8, t);
+        
+        return buildReorderable(item, (tile) {
           return SizeFadeTransition(
             sizeFraction: 0.7,
             curve: Curves.easeInOut,
             animation: itemAnimation,
-            child: tile,
+            child: Material(
+                color: color,
+                elevation: elevation!,
+                type: MaterialType.transparency,
+                child: tile
+              ),
           );
         });
       },
-      updateItemBuilder: (context, itemAnimation, lang) {
-        return buildReorderable(lang, (tile) {
+      updateItemBuilder: (context, itemAnimation, item) {
+        return buildReorderable(item, (tile) {
           return FadeTransition(
             opacity: itemAnimation,
             child: tile,
@@ -153,8 +208,8 @@ class _LanguagePageState extends State<LanguagePage>
     return Container(
       height: _horizontalHeight,
       alignment: Alignment.center,
-      child: ImplicitlyAnimatedReorderableList<Language>(
-        items: selectedLanguages,
+      child: ImplicitlyAnimatedReorderableList<Item>(
+        items: _items,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         scrollDirection: Axis.horizontal,
         areItemsTheSame: (oldItem, newItem) => oldItem == newItem,
@@ -191,7 +246,7 @@ class _LanguagePageState extends State<LanguagePage>
     );
   }
 
-  Widget _buildTile(Language lang) {
+  Widget _buildTile(Item item) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
@@ -222,32 +277,32 @@ class _LanguagePageState extends State<LanguagePage>
     // ];
 
     return Slidable(
-      startActionPane: ActionPane(
-        // A motion is a widget used to control how the pane animates.
-        motion: const ScrollMotion(),
+      // startActionPane: ActionPane(
+      //   // A motion is a widget used to control how the pane animates.
+      //   motion: const ScrollMotion(),
 
-        // A pane can dismiss the Slidable.
-        dismissible: DismissiblePane(onDismissed: () {}),
+      //   // A pane can dismiss the Slidable.
+      //   dismissible: DismissiblePane(onDismissed: () {}),
 
-        // All actions are defined in the children parameter.
-        children: [
-          // A SlidableAction can have an icon and/or a label.
-          SlidableAction(
-            onPressed: doNothing,
-            backgroundColor: const Color(0xFFFE4A49),
-            foregroundColor: Colors.white,
-            icon: Icons.delete,
-            label: 'Delete',
-          ),
-          SlidableAction(
-            onPressed: doNothing,
-            backgroundColor: const Color(0xFF21B7CA),
-            foregroundColor: Colors.white,
-            icon: Icons.share,
-            label: 'Share',
-          ),
-        ],
-      ),
+      //   // All actions are defined in the children parameter.
+      //   children: [
+      //     // A SlidableAction can have an icon and/or a label.
+      //     SlidableAction(
+      //       onPressed: doNothing,
+      //       backgroundColor: const Color(0xFFFE4A49),
+      //       foregroundColor: Colors.white,
+      //       icon: Icons.delete,
+      //       label: 'Delete',
+      //     ),
+      //     SlidableAction(
+      //       onPressed: doNothing,
+      //       backgroundColor: const Color(0xFF21B7CA),
+      //       foregroundColor: Colors.white,
+      //       icon: Icons.share,
+      //       label: 'Share',
+      //     ),
+      //   ],
+      // ),
       // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
@@ -273,19 +328,19 @@ class _LanguagePageState extends State<LanguagePage>
       child: Container(
         alignment: Alignment.center,
         // For testing different size item. You can comment this line
-        padding: lang.englishName == 'English'
-            ? const EdgeInsets.symmetric(vertical: 16.0)
-            : EdgeInsets.zero,
+        // padding: lang.englishName == 'English'
+        //     ? const EdgeInsets.symmetric(vertical: 16.0)
+        //     : EdgeInsets.zero,
         child: ListTile(
           title: Text(
-            lang.nativeName,
-            style: textTheme.bodyText2?.copyWith(
+            item.name,
+            style: textTheme.bodyMedium?.copyWith(
               fontSize: 16,
             ),
           ),
           subtitle: Text(
-            lang.englishName,
-            style: textTheme.bodyText1?.copyWith(
+            item.description,
+            style: textTheme.bodyLarge?.copyWith(
               fontSize: 15,
             ),
           ),
@@ -294,8 +349,8 @@ class _LanguagePageState extends State<LanguagePage>
             height: 36,
             child: Center(
               child: Text(
-                '${selectedLanguages.indexOf(lang) + 1}',
-                style: textTheme.bodyText2?.copyWith(
+                '${_items.indexOf(item) + 1}',
+                style: textTheme.bodyMedium?.copyWith(
                   color: Colors.indigo,
                   fontSize: 16,
                 ),
@@ -315,7 +370,7 @@ class _LanguagePageState extends State<LanguagePage>
     );
   }
 
-  Widget _buildBox(Language item, double t) {
+  Widget _buildBox(Item item, double t) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
@@ -339,13 +394,13 @@ class _LanguagePageState extends State<LanguagePage>
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                item.nativeName,
-                style: textTheme.bodyText2,
+                item.name,
+                style: textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                item.englishName,
-                style: textTheme.bodyText1,
+                item.description,
+                style: textTheme.bodyLarge,
               ),
             ],
           ),
@@ -437,13 +492,13 @@ class _LanguagePageState extends State<LanguagePage>
       onSelected: (value) {
         switch (value) {
           case 'Shuffle':
-            setState(selectedLanguages.shuffle);
+            setState(_items.shuffle);
             break;
           case 'Test':
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const TestPage(),
+                builder: (_) => HomeScreen(),
               ),
             );
             break;

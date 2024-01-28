@@ -1,16 +1,18 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
-import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
+import 'package:uuid/uuid.dart';
+
 import 'package:rankit_flutter/objects/item.dart';
 import 'package:rankit_flutter/objects/list_data.dart';
 import 'package:rankit_flutter/objects/user_list_ranking.dart';
 import 'package:rankit_flutter/screens/home_screen.dart';
 import 'package:rankit_flutter/service/firestore_service.dart';
-import 'package:uuid/uuid.dart';
 
 import 'utils/box.dart';
 
@@ -79,6 +81,7 @@ class _LanguagePageState extends State<LanguagePage>
       userId: user.uid,
       visibility: "Private",
       ranks: ranks,
+      lastUpdated: Timestamp.now(),
     );
     
     FirestoreService.create("User Rankings", const Uuid().v1(), _userListRanking.toMap());
@@ -101,7 +104,7 @@ class _LanguagePageState extends State<LanguagePage>
         // ],
       ),
       body: ListView(
-        controller: scrollController,
+        // controller: scrollController,
         // Prevent the ListView from scrolling when an item is
         // currently being dragged.
         // padding: const EdgeInsets.only(bottom: 24),
@@ -168,7 +171,23 @@ class _LanguagePageState extends State<LanguagePage>
       physics: const ScrollPhysics(),
       padding: EdgeInsets.zero,
       areItemsTheSame: (oldItem, newItem) => oldItem == newItem,
-      onReorderStarted: (item, index) => setState(() => inReorder = true),
+      onReorderStarted: (item, index) {
+        setState(() => inReorder = true);
+        // Scroll to the top or bottom of the list when an item is being dragged.
+        if (index < _items.length / 2) {
+          scrollController.animateTo(
+            scrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
       onReorderFinished: (movedLanguage, from, to, newItems) {
         // Update the underlying data when the item has been reordered!
         onReorderFinished(newItems);

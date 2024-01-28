@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserListRanking {
   String userId;
   String listId;
   String visibility;
   Map<String, int> ranks;
+  Timestamp lastUpdated;
 
 
   UserListRanking({
@@ -10,6 +13,7 @@ class UserListRanking {
     required this.listId,
     required this.visibility,
     required this.ranks,
+    required this.lastUpdated,
   });
 
   factory UserListRanking.fromMap(Map<String, dynamic> map) {
@@ -18,6 +22,7 @@ class UserListRanking {
       listId: map['listId'],
       visibility: map['visibility'],
       ranks: map['ranks'],
+      lastUpdated: map['lastUpdated'],
     );
   }
   
@@ -27,6 +32,7 @@ class UserListRanking {
       'listId': listId,
       'visibility': visibility,
       'ranks': ranks,
+      'lastUpdated': lastUpdated,
     };
   }
 }

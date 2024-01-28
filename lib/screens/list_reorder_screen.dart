@@ -111,6 +111,8 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
         onReorderDone: _reorderDone,
         // _saveOrder: _saveOrder,
         child: CustomScrollView(
+          // dragStartBehavior: DragStartDetailsBehavior.down,
+          controller: ScrollController(),
           cacheExtent: 3000,
           slivers: <Widget>[
             SliverAppBar(
@@ -152,9 +154,10 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
                     return Column(
                       children: [
                         
-                        Text('${index + 1}'),
+                        // Text('${index + 1}'),
                         ListItem(
                           data: _items[index],
+                          items: _items,
                           // first and last attributes affect border drawn during dragging
                           isFirst: index == 0,
                           isLast: index == _items.length - 1,
@@ -193,12 +196,14 @@ class ListItem extends StatelessWidget {
   const ListItem({
     Key? key,
     required this.data,
+    required this.items,
     required this.isFirst,
     required this.isLast,
     required this.draggingMode,
   }) : super(key: key);
 
   final Item data;
+  final List<Item> items;
   final bool isFirst;
   final bool isLast;
   final DraggingMode draggingMode;
@@ -241,20 +246,28 @@ class ListItem extends StatelessWidget {
 
   Widget content = Container(
     decoration: decoration,
+    
     child: SafeArea(
+      
         top: false,
         bottom: false,
         child: Opacity(
+          
           // hide content for placeholder
           opacity: state == ReorderableItemState.placeholder ? 0.0 : 1.0,
+          
           child: IntrinsicHeight(
+            
             child: Row(
+              
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 
                 Expanded(
                     child: Slidable(
+                      closeOnScroll: false,
                       endActionPane: ActionPane(
+                        // scrollController: ScrollController(),
                         motion: const ScrollMotion(),
                         children: [
                           SlidableAction(
@@ -290,19 +303,19 @@ class ListItem extends StatelessWidget {
                               fontSize: 15,
                             ),
                           ),
-                          // leading: SizedBox(
-                          //   width: 36,
-                          //   height: 36,
-                          //   child: Center(
-                          //     child: Text(
-                          //       '${_items.indexOf(_items[index]) + 1}',
-                          //       style: textTheme.bodyMedium?.copyWith(
-                          //         color: Colors.indigo,
-                          //         fontSize: 16,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                          leading: SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: Center(
+                              child: Text(
+                                '${items.indexOf(data) + 1}',
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: Colors.indigo,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
                           // trailing: const Handle(
                           //   delay: Duration(milliseconds: 0),
                           //   capturePointer: true,

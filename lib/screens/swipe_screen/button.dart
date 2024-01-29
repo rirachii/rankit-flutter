@@ -107,6 +107,56 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
   );
 }
 
+//swipe card to the left side
+Widget swipeDownButton(AppinioSwiperController controller) {
+  return ListenableBuilder(
+    listenable: controller,
+    builder: (context, child) {
+      final SwiperPosition? position = controller.position;
+      final SwiperActivity? activity = controller.swipeActivity;
+      final double horizontalProgress =
+          (activity is Swipe || activity == null) &&
+                  position != null &&
+                  position.offset.toAxisDirection().isHorizontal
+              ? -1 * position.progressRelativeToThreshold.clamp(-1, 1)
+              : 0;
+      final Color color = Color.lerp(
+        Color.fromARGB(255, 255, 209, 56),
+        CupertinoColors.systemGrey2,
+        (-1 * horizontalProgress).clamp(0, 1),
+      )!;
+      return GestureDetector(
+        onTap: () => controller.swipeDown(),
+        child: Transform.scale(
+          // Increase the button size as we swipe towards it.
+          scale: 1 + .1 * horizontalProgress.clamp(0, 1),
+          child: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.9),
+                  spreadRadius: -10,
+                  blurRadius: 20,
+                  offset: const Offset(0, 20), // changes position of shadow
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.check_box_outline_blank_sharp,
+              color: CupertinoColors.white,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 //unswipe card
 Widget unswipeButton(AppinioSwiperController controller) {
   return GestureDetector(

@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rankit_flutter/objects/list_data.dart';
 import 'package:rankit_flutter/screens/list_screen_test/animated_list_screen%20copy.dart';
 import 'package:rankit_flutter/screens/list_screen_test/animated_list_screen.dart';
+import 'package:rankit_flutter/screens/tournament_screen.dart';
 import 'package:rankit_flutter/service/connectivity_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -106,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ListReorderScreen(
+                      builder: (context) => TournamentScreen(
                         listData: lists[index],
                       ),
                     ),

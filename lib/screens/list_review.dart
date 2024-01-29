@@ -9,38 +9,32 @@ import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
-import 'package:path/path.dart';
 import 'package:rankit_flutter/objects/item.dart';
 import 'package:rankit_flutter/objects/list_data.dart';
 import 'package:rankit_flutter/objects/user_list_ranking.dart';
 import 'package:rankit_flutter/service/firestore_service.dart';
 import 'package:uuid/uuid.dart';
 
-class ListReorderScreen extends StatefulWidget {
+class ListReviewScreen extends StatefulWidget {
   final ListData listData;
+  final List<Item> items;
 
-  const ListReorderScreen({Key? key, required this.listData}) : super(key: key);
+  const ListReviewScreen({Key? key, required this.listData, required this.items}) : super(key: key);
 
   @override
   _ListReorderScreenState createState() => _ListReorderScreenState();
 }
 
-enum DraggingMode {
-  iOS,
-  android,
-}
-
-class _ListReorderScreenState extends State<ListReorderScreen> {
+class _ListReorderScreenState extends State<ListReviewScreen> {
   late User user;
   late List<Item> _items;
-  // final UserListRanking _userListRanking = UserListRanking();
   final Map<String, int> ranks = {};
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser!;
-    _items = widget.listData.items;
+    _items = widget.items;
     int i = 0;
     for (Item item in _items) {
       item.setRank = ValueKey(i);
@@ -65,13 +59,6 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
       _items.insert(newPositionIndex, draggedItem);
     });
     return true;
-  }
-
-  void _reorderDone(Key item) {
-    // Save the new order to your data source
-    // final draggedItem = _items[_indexOfKey(item)];
-    // debugPrint("Reordering finished for ${draggedItem.name}}");
-    
   }
 
   void saveRanks() {
@@ -101,14 +88,11 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
   // containing ReorderableItems widgets
   //
 
-  DraggingMode _draggingMode = DraggingMode.iOS;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: reorderable.ReorderableList(
         onReorder: _reorderCallback,
-        onReorderDone: _reorderDone,
         // _saveOrder: _saveOrder,
         child: CustomScrollView(
           // dragStartBehavior: DragStartDetailsBehavior.down,
@@ -116,32 +100,9 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
           cacheExtent: 3000,
           slivers: <Widget>[
             SliverAppBar(
-              title: const Text('List Ranking'),
+              title: const Text('Ranking Review'),
               backgroundColor: Colors.yellow.shade800,
-              actions: <Widget>[
-                PopupMenuButton<DraggingMode>(
-                  initialValue: _draggingMode,
-                  onSelected: (DraggingMode mode) {
-                    setState(() {
-                      _draggingMode = mode;
-                    });
-                  },
-                  itemBuilder: (BuildContext context) =>
-                      <PopupMenuItem<DraggingMode>>[
-                    const PopupMenuItem<DraggingMode>(
-                        value: DraggingMode.iOS,
-                        child: Text('Button Drag')),
-                    const PopupMenuItem<DraggingMode>(
-                        value: DraggingMode.android,
-                        child: Text('Hold to drag')),
-                  ],
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: const Text("Options"),
-                  ),
-                ),
-              ],
+              floating: true,
               pinned: true,
             ),
             SliverPadding(
@@ -161,7 +122,6 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
                           // first and last attributes affect border drawn during dragging
                           isFirst: index == 0,
                           isLast: index == _items.length - 1,
-                          draggingMode: _draggingMode,
                         ),
                       ],
                     );
@@ -179,7 +139,7 @@ class _ListReorderScreenState extends State<ListReorderScreen> {
                     saveRanks();
                     Navigator.pop(context);
                   },
-                  child: const Text('Save Order'),
+                  child: const Text('Reorder'),
                 ),
               ),
             ),
@@ -197,14 +157,12 @@ class ListItem extends StatelessWidget {
     required this.items,
     required this.isFirst,
     required this.isLast,
-    required this.draggingMode,
   }) : super(key: key);
 
   final Item data;
   final List<Item> items;
   final bool isFirst;
   final bool isLast;
-  final DraggingMode draggingMode;
 
   Widget _buildChild(BuildContext context, ReorderableItemState state) {
   final theme = Theme.of(context);
@@ -230,17 +188,17 @@ class ListItem extends StatelessWidget {
 
   // For iOS dragging mode, there will be drag handle on the right that triggers
   // reordering; For android mode it will be just an empty container
-  Widget dragHandle = draggingMode == DraggingMode.iOS
-      ? ReorderableListener(
-          child: Container(
-            padding: const EdgeInsets.only(right: 18.0, left: 18.0),
-            color: const Color(0x08000000),
-            child: const Center(
-              child: Icon(Icons.reorder, color: Color(0xFF888888)),
-            ),
-          ),
-        )
-      : Container();
+  // Widget dragHandle = draggingMode == DraggingMode.iOS
+  //     ? ReorderableListener(
+  //         child: Container(
+  //           padding: const EdgeInsets.only(right: 18.0, left: 18.0),
+  //           color: const Color(0x08000000),
+  //           child: const Center(
+  //             child: Icon(Icons.reorder, color: Color(0xFF888888)),
+  //           ),
+  //         ),
+  //       )
+  //     : Container();
 
   Widget content = Container(
     decoration: decoration,
@@ -331,19 +289,12 @@ class ListItem extends StatelessWidget {
                     // )
                   ),
                 // Triggers the reordering
-                dragHandle,
+                // dragHandle,
               ],
             ),
           ),
-    )),
-  );
-
-    // For android dragging mode, wrap the entire content in DelayedReorderableListener
-  if (draggingMode == DraggingMode.android) {
-    content = DelayedReorderableListener(
-      child: content,
+      )),
     );
-  }
 
     return content;
   }

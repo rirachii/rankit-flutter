@@ -68,11 +68,12 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // TutorialAnimationButton(_shakeCard),
-                    // const SizedBox(
-                    //   width: 20,
-                    // ),
+                    
                     swipeLeftButton(controller),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    swipeDownButton(controller),
                     const SizedBox(
                       width: 20,
                     ),

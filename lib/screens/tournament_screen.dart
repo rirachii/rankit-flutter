@@ -17,6 +17,12 @@ class _TournamentScreenState extends State<TournamentScreen> {
   late ListData listData = widget.listData;
   late List<Item> remainingItems;
   late List<Item> rankedItems;
+  Map<int, Color> colors = {
+    0: Colors.white,
+    1: Colors.white,
+    2: Colors.white,
+    3: Colors.white,
+  };
 
   @override
   void initState() {
@@ -25,10 +31,11 @@ class _TournamentScreenState extends State<TournamentScreen> {
     rankedItems = [];
   }
 
-  void rankItem(Item item) {
+  void rankItem(Item item, i) {
     setState(() {
-      remainingItems.remove(item);
-      rankedItems.insert(0, item);
+      // remainingItems.remove(item);
+      // rankedItems.insert(0, item);
+      colors[i] = Colors.green;
     });
 
     if (remainingItems.length < 2) {
@@ -44,6 +51,25 @@ class _TournamentScreenState extends State<TournamentScreen> {
     }
   }
 
+  // void binarySearch(List<Item> arr, int target) {
+  //   int left = 0;
+  //   int right = arr.length - 1;
+
+  //   while (left <= right) {
+  //     int mid = left + ((right - left) >> 1);
+
+  //     if (arr[mid] is better than target) {
+  //       left = mid + 1;
+  //     } else if (arr[mid] is worse than target){
+  //       right = mid - 1;
+  //     } else {
+  //       arr.insert(mid, target)
+  //     }
+  //   }
+
+  //   return;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,11 +78,12 @@ class _TournamentScreenState extends State<TournamentScreen> {
         ? Column(
           children: <Widget>[
             const Text('Which do you prefer?'),
-            for (var i = 0; i < 2; i++)
+            for (var i = 0; i < 4; i++)
               ListTile(
+                tileColor: colors[i],
                 title: Text(remainingItems[i].name),
                 subtitle: Text(remainingItems[i].description),
-                onTap: () => rankItem(remainingItems[i]),
+                onTap: () => rankItem(remainingItems[i], i),
               ),
           ],
         )

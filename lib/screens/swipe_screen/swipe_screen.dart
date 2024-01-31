@@ -6,6 +6,7 @@ import 'package:rankit_flutter/objects/item.dart';
 import 'package:rankit_flutter/screens/list_reorder_screen.dart';
 import 'package:rankit_flutter/screens/swipe_screen/button.dart';
 import 'package:rankit_flutter/screens/swipe_screen/card.dart';
+import 'package:rankit_flutter/screens/tournament_screen.dart';
 
 import '../../objects/box.dart' as global_box;
 
@@ -28,7 +29,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
   Map<int, Item> left = {};
   Map<int, Item> right = {};
-  Map<int, Item> top = {};
+  Map<int, Item> archive = {};
   Map<int, Item> bottom = {};
 
   @override
@@ -41,60 +42,69 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
+    return Scaffold(
+      appBar: const CupertinoNavigationBar(
         middle: Text('Rank List'),
       ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
+      body: Center(
         child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.55,
-              child: AppinioSwiper(
-                onSwipeEnd: _swipeEnd,
-                onEnd: _onEnd,
-                controller: controller,
-                cardCount: itemFields.length,
-                cardBuilder: (BuildContext context, int index) {
-                  return SwipeCard(item: itemFields[index]);
-                },
+          children:[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.75,
+                    child: AppinioSwiper(
+                      onSwipeEnd: _swipeEnd,
+                      onEnd: _onEnd,
+                      controller: controller,
+                      cardCount: itemFields.length,
+                      cardBuilder: (BuildContext context, int index) {
+                        return SwipeCard(item: itemFields[index]);
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    // height: 100,
+                    child: IconTheme.merge(
+                      data: const IconThemeData(size: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          swipeLeftButton(controller),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          swipeDownButton(controller),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          swipeRightButton(controller),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          // swipeUpButton(controller,
+                          // ),
+                          // const SizedBox(
+                          //   width: 20,
+                          // ), 
+                          unswipeButton(controller),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              height: 100,
-              child: IconTheme.merge(
-                data: const IconThemeData(size: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    
-                    swipeLeftButton(controller),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    swipeDownButton(controller),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    swipeRightButton(controller),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    unswipeButton(controller),
-                  ],
-                ),
-              ),
-            )
-            // add more SizedBox widgets as needed
-          ],
-        ),
-      ),
-    );
+          ]
+      )));
   }
 
   void _onEnd() {
-    if (bottom.isNotEmpty) {
+    if (archive.isNotEmpty) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -103,14 +113,26 @@ class _SwipeScreenState extends State<SwipeScreen> {
           ),
         ),
       );
+    } else {
+      Map<String, List<Item>> groupedItem = {
+        'left': left.values.toList(),
+        'right': right.values.toList(),
+        'bottom': bottom.values.toList(),
+        'archive': archive.values.toList(),
+      };
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TournamentScreen(
+            listData: widget.listData,
+            // groupedItem: groupedItem,
+          ),
+        ),
+      );
     }
   }
 
   void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
-    // print('Left: $left');
-    // print('Right: $right');
-    // print('Top: $top');
-    // print('Bottom: $bottom');
     switch (activity) {
       case Swipe():
         switch (activity.direction) {
@@ -121,7 +143,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
             right[previousIndex] = itemFields[previousIndex];
             break;
           case AxisDirection.up:
-            top[previousIndex] = itemFields[previousIndex];
+            archive[previousIndex] = itemFields[previousIndex];
             break;
           case AxisDirection.down:
             bottom[previousIndex] = itemFields[previousIndex];
@@ -139,7 +161,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
             right.remove(targetIndex);
             break;
           case AxisDirection.up:
-            top.remove(targetIndex);
+            archive.remove(targetIndex);
             break;
           case AxisDirection.down:
             bottom.remove(targetIndex);

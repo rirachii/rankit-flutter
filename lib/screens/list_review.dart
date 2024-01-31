@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

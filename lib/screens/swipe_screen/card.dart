@@ -81,13 +81,6 @@ class SwipeCard extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    // Text(
-                    //   candidate.city!,
-                    //   style: const TextStyle(
-                    //     color: Colors.grey,
-                    //     fontSize: 15,
-                    //   ),
-                    // )
                   ],
                 ),
               ],

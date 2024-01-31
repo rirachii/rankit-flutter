@@ -1,0 +1,27 @@
+{
+    "completed": 0, 
+    "creatorId": "Qs3TrTbppiXhzyocgJpv151jfuX2", 
+    "creatorName": "", 
+    "creatorPfp": "", 
+    "dateCreated": "2022-06-01T00:00:00.000Z", 
+    "items": [
+        {
+            "description": "sex", 
+            "id": "item-1259ede0-bbf1-11ee-970c-530b0be6c62b", 
+            "imageUrl": "imageFile?.path", 
+            "name": 6
+        }, 
+        {
+            
+        }
+    ], 
+    "lastUpdated": "2022-06-01T00:00:00.000Z", 
+    "likes": 1, 
+    "listDescription": "sd", 
+    "listId": "4aebaff0-bb28-11ee-913d-d9145ea1e16c", 
+    "listImgUrl": "https://firebasestorage.googleapis.com/v0/b/rankit-78bb2.appspot.com/o/Public%20Lists%20Images%2Fds.png?alt=media&token=40bc0298-56e1-4ada-b5b7-4f01995d95fd",
+    "listName": "ds", 
+    "tags": [], 
+    "updateNote": "", 
+    "visibility": "Private"
+}

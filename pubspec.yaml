@@ -51,6 +51,7 @@ dependencies:
   connectivity_plus: ^5.0.2
   animated_list_plus: ^0.5.2
   flutter_slidable: ^2.0.0
+  card_swiper : ^3.0.0
 
 dev_dependencies:
   flutter_test:
